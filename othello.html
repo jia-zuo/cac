@@ -1,0 +1,266 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml">
+	<head>
+		<title> 黑白棋 </title>
+		<style>
+		v\:* {behavior:url(#default#VML);}
+		/** Board **/
+		#chessdiv{
+			width:298px;
+			height:298px;
+			background:url(image/boarder0.gif);
+		}
+		#bind{
+			position:absolute;
+			left:0px;
+			top:26px;
+			width:298px;
+			height:298px;
+			background:url(image/spacer.gif);
+			display:none;
+		}
+		#mention{
+			position:absolute;
+			left:70px;
+			top:100px;
+			width:158px;
+			height:88px;
+			background:url(image/mention.gif);
+			display:none;
+		}		
+		#setting
+		{
+			position:absolute;
+			left:0px;
+			top:26px;
+			width:298px;
+			height:298px;
+			display:none;
+		}
+		#help
+		{
+			position:absolute;
+			left:0px;
+			top:26px;
+			width:298px;
+			height:298px;
+			display:none;			
+			overflow:auto;
+		}		
+		#centertab {
+			border: 3px solid #ffaa00;
+			background:#cccccc;
+		}
+		#quesTitle {
+			font-weight:bold;
+			padding:5px;
+		}				
+		.tdStyle{
+			width:35px;
+			height:35px;	
+		}	
+		.btn {
+			border-right: #002D96 1px solid;
+			padding-right: 5px;
+			border-top: #002D96 1px solid;
+			padding-left: 5px;
+			font-size: 12px;
+			filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#FFFFFF, EndColorStr=#9DBCEA);
+			border-left: #002D96 1px solid;
+			cursor: hand;
+			color: #805500;
+			padding-top: 3px;
+			border-bottom: #002D96 1px solid;
+		}
+		p {
+			padding:3px;
+			margin:0;
+			font-size:12px;
+			color: #805500;
+		}				
+		</style>	
+	</head>
+	
+	<body bgcolor="#000100" leftmargin="0" topmargin="0" rightmargin="0" bottomargin="0" onunload="exitGame();" onload="board_create();initChessTable();">
+		<table border=0 height="350" width="298" cellspacing="0" cellpadding="0" background="image/frame.gif">
+			<tr height="26">
+				<td colspan="3" valign="bottom" align="left">
+					<font color="#805500" style="font-family: 幼圆; font-weight:bold;">黑白棋</font>
+				</td>
+				
+				<td colspan="3" valign="bottom" align="center">
+					<font color="#805500" style="font-family: 仿宋; font-weight:bold; font-size: 12px;">
+						<span id="result"></span>
+					</font>
+				</td>					
+				
+				<td colspan="2" valign="bottom" align="right">
+					
+				</td>	
+			</tr>
+			<tr height="298">
+				<td colspan="8" valign="middle" align="center">
+					<!--棋盘版块-->
+					<table border="1" height="100%" width="100%" cellspacing="0" cellpadding="0" bordercolor="#ffaa00">
+						<TBODY id="chessTable"></TBODY>
+					</table>
+					<div id="bind"></div>
+					<div id="mention"></div>
+
+
+					<div id="setting">
+					<table border="0" height="100%" width="100%" cellpadding="0" cellspacing="0" id="centertab">
+					<tr>
+						<td colspan="2" align="center" height="35px" style="font-size:16px;letter-spacing:2px;background:#cccccc;color:#805500" valign="middle">
+						<b>设置</b>
+						</td>
+					</tr>		
+					<tr>
+						<td height="*" width="40%" valign="top" align="right" style="padding:5px">
+							<div id="quesTitle">
+								<font color="#805500" style="font-size: 15px;">我选择</font>
+							</div>	
+						</td>
+						<td height="*" width="60%" valign="top" align="left" style="padding:5px">		
+							<div id="quesOptions" style="text-align:left">
+								&nbsp;<input id="setting2b" type="radio" name="setting2" value="1" />
+								<font color="#805500" style="font-size: 15px;">黑棋</font><br/>
+								&nbsp;<input id="setting2w" type="radio" name="setting2" value="2" />
+								<font color="#805500" style="font-size: 15px;">白棋</font>
+							</div>		
+						</td>				
+					</tr>			
+					<tr>
+						<td colspan="2" width="100%" height="1px" style="background:#cccccc;color:#ffaa00"></td>
+					</tr>
+					<tr>
+						<td height="*" width="40%" valign="top" align="right" style="padding:5px">
+							<div id="quesTitle">
+								<font color="#805500" style="font-size: 15px;">级别</font>
+							</div>
+						</td>		
+						<td height="*" width="60%" valign="top" align="left" style="padding:5px">
+							<div id="quesOptions" style="text-align:left">
+								&nbsp;<input id="setting1c" type="radio" name="setting1" value="common" />
+								<font color="#805500" style="font-size: 15px;">普通</font><br/>
+								&nbsp;<input id="setting1m" type="radio" name="setting1" value="middle" />
+								<font color="#805500" style="font-size: 15px;">中级</font><br/>
+								&nbsp;<input id="setting1a" type="radio" name="setting1" value="advance" />
+								<font color="#805500" style="font-size: 15px;">高级</font>
+							</div>
+						</td>		
+					</tr>				
+					<tr>
+						<td colspan="2" height="30px" valign="middle" align="center" style="border-top:1px solid #cccccc;background:#cccccc;">
+							<input type="button" id="submitStartBtn" value="重新开始" onclick="SettingOk();" class="btn"/>
+						</td>
+					</tr>
+					</table>
+					</div>
+					
+					
+					
+					<div id="help">
+					<table border="0" height="100%" width="100%" cellpadding="0" cellspacing="0" id="centertab">
+					<tr>
+						<td align="center" height="35px" style="font-size:16px;letter-spacing:2px;background:#cccccc;color:#805500" valign="middle">
+						<b>游戏帮助</b>
+						</td>
+					</tr>
+					<tr>
+						<td height="*" valign="top" align="left" style="padding:5px;">		
+							<p>◆<b>玩法</b><br/>
+→<b>基本规则</b><br/>
+黑白棋的棋盘是一个有8*8方格的棋盘。
+下棋时将棋下在空格中间，而不是像围棋一样下在交叉点上。
+开始时在棋盘正中有两白两黑四个棋子交叉放置，黑棋总是先下子。<br/><br/>
+<img src="image/help1.gif" alt="落子与吃子" style="width:150;height:174;" align="right"/>
+→<b>下子的方法</b><br/>
+在棋盘上移动鼠标，会出现定位框，从定位框位置往周围延伸，如果在横、竖、斜八个方向内有一个自己的棋子，
+而且被夹在中间的有对方的棋子，则中间的全部翻转，成为自己的棋子。
+并且，只有在可以翻转棋子的地方下子才有效。 
+如图所示，现在轮到白子下棋，如果在瞄准框的位置下子，三个方向被红线划出的黑棋就会翻转成白棋
+<br/><br/>
+→<b>胜负判定条件</b><br/>
+如果玩家在棋盘上没有地方可以下子，则该玩家对手可以连下。
+双方都没有棋子可以下时棋局结束，以棋子数目来计算胜负，棋子多的一方获胜。
+在棋盘还没有下满时，如果一方的棋子已经被对方吃光，则棋局也结束。将对手棋子吃光的一方获胜。
+							</p>							
+							<br/>
+
+							<p>◆<b>游戏界面</b><br/>	
+→<b>设置和重启</b><br/>						
+鼠标移动到<img src="image/start.gif" alt="设置" style="width:22;height:22;" align="bottom"/>上方，
+会变成手型，提示“设置”，点击之后出现设置界面，再次点击，隐藏设置界面。
+在设置界面里，可以选择使用的棋子颜色，也可以选择下棋的难度。选择之后，点击下方的“重新开始”按钮，
+可以重启游戏。<br/><br/>
+→<b>帮助</b><br/>
+鼠标移动到<img src="image/help.gif" alt="帮助" style="width:22;height:22;" align="bottom"/>上方，
+会变成手型，提示“帮助”，点击之后出现帮助界面，再次点击，隐藏帮助界面。<br/><br/>
+→<b>结束</b><br/>
+当胜负已定时，就会在左下角显示<img src="image/pass.gif" alt="结束" style="width:22;height:22;" align="bottom"/>图标，
+点击之后可以结束游戏。<br/><br/>
+							</p>							
+							<br/>
+					
+							<p>◆<b>创意来源</b><br/>
+→<b>百科</b><br/>		
+<a href="http://baike.baidu.com/view/24242.htm" target="_blank">百度“黑白棋”百科</a><br/><br/>
+<!--→<b>素材</b><br/>		
+<a href="http://www.dearbook.com.cn/2006/ajaxrice/" target="_blank">中国首届AJAX大赛</a><br/>
+<a href="http://cn.download.widget.yahoo.com/widget/download_win/Othello.widget" target="_blank">Yahoo Widget Othello</a><br/>-->
+							</p><br/>
+							
+							<p>◆<b>版本历史</b><br/>
+→<b>ver 1.0</b><br/>
+人机对战，机器具备普通智能
+							</p><br/>
+									
+						</td>				
+					</tr>	
+					<tr>
+						<td height="30px" valign="middle" align="center" style="border-top:1px solid #cccccc;background:#cccccc;">
+							<input type="button" id="submitHelpBtn" value="确定" onclick="HelpOk();" class="btn"/>
+						</td>
+					</tr>
+					</table>
+					</div>
+					
+										
+				</td>
+			</tr>
+			<tr height="26">
+				<td width="8%" align="left" valign="top">
+					<!--<v:image src="image/reset.png" alt="设置" style="width:22;height:22;cursor:hand;" onclick="OpenSetting();"/>-->
+					<img src="image/start.gif" alt="设置" style="width:22;height:22;cursor:hand;" onclick="OpenSetting();" />
+				</td>
+				<td width="8%" align="left" valign="top">
+					<!--<v:image src="image/help.png" style="width:22;height:22;cursor:hand;"/>-->
+					<img src="image/help.gif" alt="帮助" style="width:22;height:22;cursor:hand;" onclick="OpenHelp();" />
+				</td>
+				<td width="8%" align="left" valign="top">		
+					<img id="passimg" src="image/pass.gif" alt="结束" style="width:22;height:22;cursor:hand;display:none;" onclick="ExitOthello();" />
+				</td>
+				<td width="16%" align="left" valign="top">					
+				</td>
+							
+				<td width="28%" align="right" valign="top">
+					<font color="#805500" style="font-family: 幼圆; font-weight:bold; font-size: 15px;">黑:</font>
+				</td>
+				<td width="10%" align="left" valign="top" style="padding:2px;">
+					<font color="#805500" style="font-family: 幼圆; font-weight:bold; font-size: 15px;">
+						<span id="bNum">&nbsp;</span>
+					</font>
+				</td>							
+				<td width="10%" align="right" valign="top">
+					<font color="#805500" style="font-family: 幼圆; font-weight:bold; font-size: 15px;">白:</font>
+				</td>				
+				<td width="10%" align="left" valign="top" style="padding:2px;">
+					<font color="#805500" style="font-family: 幼圆; font-weight:bold; font-size: 15px;">
+						<span id="wNum">&nbsp;</span>
+					</font>
+				</td>										
+			</tr>
+		</table>
+		<script type="text/javascript" src="js/othello.js"></script>
+	</body> 
+</html>
