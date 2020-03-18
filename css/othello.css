@@ -1,0 +1,74 @@
+/** Board **/
+#chessdiv{
+	width:298px;
+	height:298px;
+	background:url(../image/boarder.gif);
+}
+#bind{
+	position:absolute;
+	left:0px;
+	top:26px;
+	width:298px;
+	height:298px;
+	background:url(../image/spacer.gif);
+	display:none;
+}
+#mention{
+	position:absolute;
+	left:70px;
+	top:100px;
+	width:158px;
+	height:88px;
+	background:url(../image/mention.gif);
+	display:none;
+}		
+#setting
+{
+	position:absolute;
+	left:0px;
+	top:26px;
+	width:298px;
+	height:298px;
+	display:none;
+}
+#help
+{
+	position:absolute;
+	left:0px;
+	top:26px;
+	width:298px;
+	height:298px;
+	display:none;			
+	overflow:auto;
+}		
+#centertab {
+	border: 3px solid #ffaa00;
+	background:#cccccc;
+}
+#quesTitle {
+	font-weight:bold;
+	padding:5px;
+}				
+.tdStyle{
+	width:35px;
+	height:35px;	
+}	
+.btn {
+	border-right: #002D96 1px solid;
+	padding-right: 5px;
+	border-top: #002D96 1px solid;
+	padding-left: 5px;
+	font-size: 12px;
+	filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#FFFFFF, EndColorStr=#9DBCEA);
+	border-left: #002D96 1px solid;
+	cursor: hand;
+	color: #805500;
+	padding-top: 3px;
+	border-bottom: #002D96 1px solid;
+}
+p {
+	padding:3px;
+	margin:0;
+	font-size:12px;
+	color: #805500;
+}	
