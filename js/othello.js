@@ -1,37 +1,37 @@
-var myChessColor; // ÎÒµÄÆå×ÓµÄÑÕÉ«
+var myChessColor; // æˆ‘æ‰§æ£‹å­çš„é¢œè‰²
 var chessLevel;
-// onclickµÄÏìÓ¦Àï£¬Âä×ÓÈ«²¿½øĞĞºÃÒÔºó£¬µ÷ÓÃÖÇÄÜËã·¨£¬·ÖÇøÓò·Ö½×¶Î±éÀúÆåÅÌ
+// onclickçš„å“åº”é‡Œï¼Œè½å­å…¨éƒ¨è¿›è¡Œå¥½ä»¥åï¼Œè°ƒç”¨æ™ºèƒ½ç®—æ³•ï¼Œåˆ†åŒºåŸŸåˆ†é˜¶æ®µéå†æ£‹ç›˜
 
 var counterPartColor;
 
 var board; 
-var directionSeq; // Êó±êÎ»ÖÃµÄ¸÷·½×´¿ö
-var now_show_focus; // Êó±êÒÆ¶¯µ½µÄÎ»ÖÃÓĞÃ»ÓĞ¿ÉÒÔ³ÔµÄ		
-var dir; //·½ÏòÔöÁ¿±í
+var directionSeq; // é¼ æ ‡ä½ç½®çš„å„æ–¹çŠ¶å†µ
+var now_show_focus; // é¼ æ ‡ç§»åŠ¨åˆ°çš„ä½ç½®æœ‰æ²¡æœ‰å¯ä»¥åƒçš„		
+var dir; //æ–¹å‘å¢é‡è¡¨
 var uId;
 var CounterPartId;
 var ContestStatus; 
 
-// ÓÅÏÈ×ø±ê¼¯ºÏ±í
+// ä¼˜å…ˆåæ ‡é›†åˆè¡¨
 var VSet;
 
 var settingShow=false;
 var helpShow=false;
-var lastStep="none"; // ×îºóÒ»²½Æå
+var lastStep="none"; // æœ€åä¸€æ­¥æ£‹
 
-// Á½·½µÄÆå×Ó¸öÊı
+// ä¸¤æ–¹çš„æ£‹å­ä¸ªæ•°
 var blackNum = 2;
 var whiteNum = 2;
 
 
-// Ã¿¸öCell×÷ÎªÒ»¸ö·½ÏòÉÏµÄÔªËØ
+// æ¯ä¸ªCellä½œä¸ºä¸€ä¸ªæ–¹å‘ä¸Šçš„å…ƒç´ 
 function SeqCell()
 {
 	// Set the initial state for this cell
 	this.x = 0;
 	this.y = 0;
 	this.color = 1;
-	this.num = 0; // Èç¹û¿ÉÒÔÖÃ»»£¬¼ÇÂ¼ÔÚÄÇ¸ö·½ÏòÉÏÒªÖÃ»»µÄ¸öÊı£¬ 
+	this.num = 0; // å¦‚æœå¯ä»¥ç½®æ¢ï¼Œè®°å½•åœ¨é‚£ä¸ªæ–¹å‘ä¸Šè¦ç½®æ¢çš„ä¸ªæ•°ï¼Œ 
 }
 
 function dirCell()
@@ -69,7 +69,7 @@ function board_create()
 	dir[6].dx=0; dir[6].dy=-1; 
 	dir[7].dx=-1; dir[7].dy=-1;		
 	
-	//°Ë¸ö·½ÏòµÄ±àºÅ£º0-up,1-upright,2-right,3-rightdown,4-down,5-leftdown,6-left,7-leftup
+	//å…«ä¸ªæ–¹å‘çš„ç¼–å·ï¼š0-up,1-upright,2-right,3-rightdown,4-down,5-leftdown,6-left,7-leftup
 	directionSeq = new Array(8);
 	for(i=0; i<8; i=i+1)
 	{
@@ -81,12 +81,12 @@ function board_create()
 	1,2,1,3,1,4,1,5,6,2,6,3,6,4,6,5,2,1,3,1,4,1,5,1,2,6,3,6,4,6,5,6,
 	0,1,0,6,1,0,1,1,1,6,1,7,6,0,6,1,6,6,6,7,7,1,7,6]; // 4*2,16*2,16*2,12*2
 
-	myChessColor = 1; // Ä¬ÈÏÎªºÚ×Ó£¬ÏÈÊÖ
-	chessLevel = "common"; // Ä¬ÈÏÎªÆÕÍ¨¼¶±ğ
+	myChessColor = 1; // é»˜è®¤ä¸ºé»‘å­ï¼Œå…ˆæ‰‹
+	chessLevel = "common"; // é»˜è®¤ä¸ºæ™®é€šçº§åˆ«
 }
 
-// ¸ù¾İµ±Ç°×Ô¼ººÍ¶Ô·½µÄÆå×Ó¸öÊı£¬¸Ä±äÄ³¸öµ¥ÔªµÄÊıÁ¿ÏÔÊ¾
-// ÔÚdivÀïÏÔÊ¾ÏÖÔÚË«·½µÄÕ½¿ö
+// æ ¹æ®å½“å‰è‡ªå·±å’Œå¯¹æ–¹çš„æ£‹å­ä¸ªæ•°ï¼Œæ”¹å˜æŸä¸ªå•å…ƒçš„æ•°é‡æ˜¾ç¤º
+// åœ¨divé‡Œæ˜¾ç¤ºç°åœ¨åŒæ–¹çš„æˆ˜å†µ
 function freshChessNum()
 {
 	document.getElementById("bNum").innerHTML=blackNum.toString();
@@ -97,30 +97,30 @@ function freshChessNum()
 		if(myChessColor==1 && blackNum>whiteNum)
 		{
 			//System.Widget.Settings.writeString(CounterPartId+uId+"ContestStatus","IWon");
-			document.getElementById("result").innerHTML = "³ÖºÚ×Ó:Ó®ÁË";
+			document.getElementById("result").innerHTML = "æŒé»‘å­:èµ¢äº†";
 		}
 		else if(myChessColor==2 && whiteNum>blackNum)
 		{
 			//System.Widget.Settings.writeString(CounterPartId+uId+"ContestStatus","IWon");
-			document.getElementById("result").innerHTML = "³Ö°××Ó:Ó®ÁË";			
+			document.getElementById("result").innerHTML = "æŒç™½å­:èµ¢äº†";			
 		}
 		else if(whiteNum==blackNum)
 		{
 			//System.Widget.Settings.writeString(CounterPartId+uId+"ContestStatus","Equal");
-			document.getElementById("result").innerHTML = "Æ½ÊÖ";
+			document.getElementById("result").innerHTML = "å¹³æ‰‹";
 		}
 		else
 		{
 			//System.Widget.Settings.writeString(CounterPartId+uId+"ContestStatus","GameOver");
-			document.getElementById("result").innerHTML = "¶ÔÊÖÓ®ÁË";
+			document.getElementById("result").innerHTML = "å¯¹æ‰‹èµ¢äº†";
 		}			
 		document.getElementById("passimg").style.display="block";
 	}
 }
 
 /**
-Ìí¼ÓÒ»¸öÆå×ÓÍ¼Æ¬ »òÕß ½«´øµãµÄÆå×Ó¸ü»»³É²»´øµãµÄ£¬Ìí¼ÓÍ¼Æ¬µÄÍ¬Ê±£¬
-¾Í¿ÉÒÔ´¦ÀíÖÜÎ§Í¼Æ¬µÄ±ä»¯£¬Í¬Ê±Òª¸Ä±ä±¾ÎÄ¼şÎ¬»¤µÄÊı×é
+æ·»åŠ ä¸€ä¸ªæ£‹å­å›¾ç‰‡ æˆ–è€… å°†å¸¦ç‚¹çš„æ£‹å­æ›´æ¢æˆä¸å¸¦ç‚¹çš„ï¼Œæ·»åŠ å›¾ç‰‡çš„åŒæ—¶ï¼Œ
+å°±å¯ä»¥å¤„ç†å‘¨å›´å›¾ç‰‡çš„å˜åŒ–ï¼ŒåŒæ—¶è¦æ”¹å˜æœ¬æ–‡ä»¶ç»´æŠ¤çš„æ•°ç»„
 */
 function changeChess(chess,pre)
 {
@@ -129,7 +129,7 @@ function changeChess(chess,pre)
 		return;
 	}
 	var temp = chess.split("-");
-	var num = parseInt(temp[0])*8+parseInt(temp[1]);                 //ÒÔÇ°¾ÍÊÇ´Ë´¦Ò²ÊÇ·´µÄ
+	var num = parseInt(temp[0])*8+parseInt(temp[1]);                 //ä»¥å‰å°±æ˜¯æ­¤å¤„ä¹Ÿæ˜¯åçš„
 	if(temp[2]==1)
 	{
 		document.getElementById("ID"+num).innerHTML="<img src=\"image/black"+pre+".gif\" width=\"32\" height=\"32\" border=\"0\" />";
@@ -140,28 +140,28 @@ function changeChess(chess,pre)
 }
 
 /*
-ÏÂÒ»¿ÅÆå×Ó
+ä¸‹ä¸€é¢—æ£‹å­
 */
 function putAchess(x,y,chess)
 {
-	var chessStr=x+"-"+y+"-"+chess; // ÏÖÔÚÆå×ÓµÄÎ»ÖÃ£¬Á¬Í¬µÇÂ½¶Áµ½µÄroom±àºÅ£¬ÓÃÀ´¸æËß·şÎñÆ÷Õâ´ÎÏÂÆåµÄĞÅÏ¢
-	if(lastStep!="none") // Èç¹ûÄÜ»»×Ó£¬ÏÂÃæµÄ²Ù×÷²ÅÓĞ±ØÒª½øĞĞ
+	var chessStr=x+"-"+y+"-"+chess; // ç°åœ¨æ£‹å­çš„ä½ç½®ï¼Œè¿åŒç™»é™†è¯»åˆ°çš„roomç¼–å·ï¼Œç”¨æ¥å‘Šè¯‰æœåŠ¡å™¨è¿™æ¬¡ä¸‹æ£‹çš„ä¿¡æ¯
+	if(lastStep!="none") // å¦‚æœèƒ½æ¢å­ï¼Œä¸‹é¢çš„æ“ä½œæ‰æœ‰å¿…è¦è¿›è¡Œ
 	{
-		//ÕÒµ½ÉÏÒ»¸öÎ»ÖÃ,°Ñ½¹µã×ª»»×ß,update
+		//æ‰¾åˆ°ä¸Šä¸€ä¸ªä½ç½®,æŠŠç„¦ç‚¹è½¬æ¢èµ°,update
 		var temp = lastStep.split("-");
 		var x1 = parseInt(temp[0]);
 		var y1 = parseInt(temp[1]);
-		if(temp[2]==board[x1][y1]) //Èç¹ûÃ»ÓĞ±»³Ôµô£¬Ã»ÓĞ¸Ä±äÆå×ÓÍ¼Ïó
+		if(temp[2]==board[x1][y1]) //å¦‚æœæ²¡æœ‰è¢«åƒæ‰ï¼Œæ²¡æœ‰æ”¹å˜æ£‹å­å›¾è±¡
 		{
-			changeChess(lastStep,""); //²Å¿ÉÒÔÔÚÔ­À´µÄÍ¼Ïó»ù´¡ÉÏ»»Ò»µã£¬·ñÔò¾Í°×³ÔÁË£¬ÔÚÆåÅÌÉÏÓÖ»Ö¸´ÁË
+			changeChess(lastStep,""); //æ‰å¯ä»¥åœ¨åŸæ¥çš„å›¾è±¡åŸºç¡€ä¸Šæ¢ä¸€ç‚¹ï¼Œå¦åˆ™å°±ç™½åƒäº†ï¼Œåœ¨æ£‹ç›˜ä¸Šåˆæ¢å¤äº†
 		}
 	}
 	lastStep=chessStr;
 }
 
 
-//board ºÍ myChessColor£¬Õâ¶¼ÊÇ¹«ÓÃµÄ
-//¼ÆËãµ±Ç°Ìá¹©µÄ×ø±êÔÚÄ³¸ö·½ÏòÉÏ¿É³Ô¶Ô·½×ÓµÄ¸öÊı£¬Èç¹ûÓĞ×Ó¿É³Ô£¬¾Í±ä¸üÆåÅÌ£¬Í¬Ê±¸Ä±äÍøÒ³
+//board å’Œ myChessColorï¼Œè¿™éƒ½æ˜¯å…¬ç”¨çš„
+//è®¡ç®—å½“å‰æä¾›çš„åæ ‡åœ¨æŸä¸ªæ–¹å‘ä¸Šå¯åƒå¯¹æ–¹å­çš„ä¸ªæ•°ï¼Œå¦‚æœæœ‰å­å¯åƒï¼Œå°±å˜æ›´æ£‹ç›˜ï¼ŒåŒæ—¶æ”¹å˜ç½‘é¡µ
 function eat(x,y,dx,dy,theChessColor)
 {
 	var posNum = 0;
@@ -180,7 +180,7 @@ function eat(x,y,dx,dy,theChessColor)
 		myPic = "white.gif";
 		eatChess = 1;
 	}
-	// ´¦ÀíÕı·½ÏòÉÏµÄ³Ô×Ó
+	// å¤„ç†æ­£æ–¹å‘ä¸Šçš„åƒå­
 	curX = x+dx;
 	curY = y+dy;
 	while (curX<8&&curY<8&&curX>=0&&curY>=0 && board[curX][curY]==eatChess)
@@ -189,27 +189,27 @@ function eat(x,y,dx,dy,theChessColor)
 		curX = curX+dx;
 		curY = curY+dy;
 	}	
-	// Èç¹ûÔ½½ç»òÕÒ²»µ½×Ô¼ºµÄ×Ó£¬ÄÇÃ´¾Í²»¿ÉÒÔ³Ô¶Ô·½µÄ×Ó
+	// å¦‚æœè¶Šç•Œæˆ–æ‰¾ä¸åˆ°è‡ªå·±çš„å­ï¼Œé‚£ä¹ˆå°±ä¸å¯ä»¥åƒå¯¹æ–¹çš„å­
 	if (!(curX<8&&curY<8&&curX>=0&&curY>=0)||board[curX][curY]==0)
 	{
 		posNum = 0;
 	}
 	if (posNum>0)
 	{
-		//³Ô×ÓºÍ´¦ÀíÆåÅÌµÄÏÔÊ¾
+		//åƒå­å’Œå¤„ç†æ£‹ç›˜çš„æ˜¾ç¤º
 		curX = x+dx;
 		curY = y+dy;
 		for (var i=1; i<=posNum; i=i+1)
 		{
-			board[curX][curY] = theChessColor;  //ÆåÅÌ±£´æºÃÁË
-			//¸Ä±äÍøÒ³
+			board[curX][curY] = theChessColor;  //æ£‹ç›˜ä¿å­˜å¥½äº†
+			//æ”¹å˜ç½‘é¡µ
 			num = curX*8+curY;
 			document.getElementById("ID"+num).innerHTML="<img src=\"image/"+myPic+"\" width=\"32\" height=\"32\" border=\"0\"/>";
 			curX = curX+dx;
 			curY = curY+dy;
 		}
 	}
-	// ´¦Àí¸º·½ÏòÉÏµÄ³Ô×Ó
+	// å¤„ç†è´Ÿæ–¹å‘ä¸Šçš„åƒå­
 	curX = x-dx;
 	curY = y-dy;
 	while (curX<8&&curY<8&&curX>=0&&curY>=0 && board[curX][curY]==eatChess)
@@ -224,13 +224,13 @@ function eat(x,y,dx,dy,theChessColor)
 	}
 	if (negNum>0)
 	{
-		//³Ô×ÓºÍ´¦ÀíÆåÅÌµÄÏÔÊ¾
+		//åƒå­å’Œå¤„ç†æ£‹ç›˜çš„æ˜¾ç¤º
 		curX = x-dx;
 		curY = y-dy;
 		for (var j=1; j<=negNum; j=j+1)
 		{
-			board[curX][curY] = theChessColor;  //ÆåÅÌ±£´æºÃÁË
-			//¸Ä±äÍøÒ³
+			board[curX][curY] = theChessColor;  //æ£‹ç›˜ä¿å­˜å¥½äº†
+			//æ”¹å˜ç½‘é¡µ
 			num = curX*8+curY;
 			document.getElementById("ID"+num).innerHTML="<img src=\"image/"+myPic+"\" width=\"32\" height=\"32\" border=\"0\" />";
 			curX = curX-dx;
@@ -241,18 +241,18 @@ function eat(x,y,dx,dy,theChessColor)
 }
 
 /**
-¸ù¾İÕâ¸öÎ»ÖÃºÍÂä×ÓµÄÑÕÉ«£¬¼ì²é¸÷¸ö·½Ïò¼ì²éÂä×ÓµÄ¿ÉÄÜ
-×îºóÒ»¸ö²ÎÊı×÷Îª±êÖ¾£¬Çø·Ö£ºÔ¤ÁôÅĞ¶Ï¡¢»òÕßµã»÷ÓĞ³Ô¾Í¸Ä±äÂß¼­ºÍÆåÅÌ
+æ ¹æ®è¿™ä¸ªä½ç½®å’Œè½å­çš„é¢œè‰²ï¼Œæ£€æŸ¥å„ä¸ªæ–¹å‘æ£€æŸ¥è½å­çš„å¯èƒ½
+æœ€åä¸€ä¸ªå‚æ•°ä½œä¸ºæ ‡å¿—ï¼ŒåŒºåˆ†ï¼šé¢„ç•™åˆ¤æ–­ã€æˆ–è€…ç‚¹å‡»æœ‰åƒå°±æ”¹å˜é€»è¾‘å’Œæ£‹ç›˜
 */
 function check_it(x,y,theChessColor,down)
 {
-	//°Ë¸ö·½ÏòµÄ±àºÅ£º0-up,1-upright,2-right,3-rightdown,4-down,5-leftdown,6-left,7-leftup
-	//1. ÖÜÎ§ÖÁÉÙÓĞÒìÉ«£¬ 2. ÖÁÉÙÓĞÄ³¸ö·½Ïò¿ÉÒÔ³Ô£¬
-	//ÈÔÈ»×î¶àÕÒ8¸ö·½Ïò£¬Ò»È¦Ò»È¦µØÔÚ¸½½üËÑË÷£¬ÉÏ´ÎµÄËÑË÷ÏŞ¶¨ÏÂ´ÎËÑË÷µÄ·¶Î§
+	//å…«ä¸ªæ–¹å‘çš„ç¼–å·ï¼š0-up,1-upright,2-right,3-rightdown,4-down,5-leftdown,6-left,7-leftup
+	//1. å‘¨å›´è‡³å°‘æœ‰å¼‚è‰²ï¼Œ 2. è‡³å°‘æœ‰æŸä¸ªæ–¹å‘å¯ä»¥åƒï¼Œ
+	//ä»ç„¶æœ€å¤šæ‰¾8ä¸ªæ–¹å‘ï¼Œä¸€åœˆä¸€åœˆåœ°åœ¨é™„è¿‘æœç´¢ï¼Œä¸Šæ¬¡çš„æœç´¢é™å®šä¸‹æ¬¡æœç´¢çš„èŒƒå›´
 	
-	//ÏÂ´ÎËÑË÷´ÎÊıµÄ±ä»¯£¬ĞèÒª½èÖúÉÏ´Î½á¹ûµÄ´æ´¢
-	//tÒ»ÏÂ£¬¿ªÊ¼¿´ÒìÉ«£¬½áÊø¿´Í¬É«£¬ÓĞÒ»¸ö·½Ïò½áÊø¾Í¿ÉÒÔÍ£Ö¹ÆäËûËÑË÷£¬·µ»Ø¿É³ÔµÄ±êÖ¾
-	//Ã»ÓĞ¿ªÊ¼¾Í½áÊø¡¢»òÓĞ¿ªÊ¼µÄ¶¼Ã»ÓĞ½áÊø£¬·µ»ØÃ»ÓĞ¿É³ÔµÄ±êÖ¾
+	//ä¸‹æ¬¡æœç´¢æ¬¡æ•°çš„å˜åŒ–ï¼Œéœ€è¦å€ŸåŠ©ä¸Šæ¬¡ç»“æœçš„å­˜å‚¨
+	//tä¸€ä¸‹ï¼Œå¼€å§‹çœ‹å¼‚è‰²ï¼Œç»“æŸçœ‹åŒè‰²ï¼Œæœ‰ä¸€ä¸ªæ–¹å‘ç»“æŸå°±å¯ä»¥åœæ­¢å…¶ä»–æœç´¢ï¼Œè¿”å›å¯åƒçš„æ ‡å¿—
+	//æ²¡æœ‰å¼€å§‹å°±ç»“æŸã€æˆ–æœ‰å¼€å§‹çš„éƒ½æ²¡æœ‰ç»“æŸï¼Œè¿”å›æ²¡æœ‰å¯åƒçš„æ ‡å¿—
 	var i,j;
 	var target_color;
 	var thePic;
@@ -296,18 +296,18 @@ function check_it(x,y,theChessColor,down)
 	
 		if(!(nX>=0 && nX<8 && nY>=0 && nY<8))
 		{
-			// ±êÖ¾ÉèÖÃÎª²»¿É³Ô£¬ÌáÇ°¼ÌĞøÏÂÒ»¸ö·½Ïò
+			// æ ‡å¿—è®¾ç½®ä¸ºä¸å¯åƒï¼Œæå‰ç»§ç»­ä¸‹ä¸€ä¸ªæ–¹å‘
 			directionSeq[i].num = 0;
 			continue;
-			// µ½ÁË±ß½çÒÔÍâ£¬Ò²Ã»ÓĞ·¢ÏÖÍ¬É«£¬²»ÄÜ×öÏÂÃæµÄÅĞ¶Ï
+			// åˆ°äº†è¾¹ç•Œä»¥å¤–ï¼Œä¹Ÿæ²¡æœ‰å‘ç°åŒè‰²ï¼Œä¸èƒ½åšä¸‹é¢çš„åˆ¤æ–­
 		}
-		// Æä¼äÓĞÒìÉ«µÄÇé¿ö£¬±êÖ¾ÉèÖÃÎª¿É³Ô£¬±£³Ö¼ÇÔØi·½ÏòÏÖÔÚ¿ÉÒÔÖÃ»»µÄ¸öÊı
-		// Æä¼äÃ»ÓĞÒìÉ«£¬±êÖ¾ÉèÖÃÎª²»¿É³Ô£¬ÓÃ¿É³ÔµÄ¸öÊıÎª0±íÊ¾	
-// ÒÔÏÂÎª³Ô×ÓµÄÎ¨Ò»¿ÉÄÜÌõ¼ş		
+		// å…¶é—´æœ‰å¼‚è‰²çš„æƒ…å†µï¼Œæ ‡å¿—è®¾ç½®ä¸ºå¯åƒï¼Œä¿æŒè®°è½½iæ–¹å‘ç°åœ¨å¯ä»¥ç½®æ¢çš„ä¸ªæ•°
+		// å…¶é—´æ²¡æœ‰å¼‚è‰²ï¼Œæ ‡å¿—è®¾ç½®ä¸ºä¸å¯åƒï¼Œç”¨å¯åƒçš„ä¸ªæ•°ä¸º0è¡¨ç¤º	
+// ä»¥ä¸‹ä¸ºåƒå­çš„å”¯ä¸€å¯èƒ½æ¡ä»¶		
 		if(board[nX][nY]==theChessColor && (directionSeq[i].num)>0)
 		{
-			// show_focus = true; // Ö»ÒªÔÚÒ»¸öµØ·½ÓĞ²»µÈÓÚ0µÄÇé¿ö£¬¾ÍÓĞµÄ³Ô
-			// Èç¹ûÓĞÂä×ÓµÄ¶¯×÷£¬»òÕßÔÚ×Ô¶¯Ëã·¨ÀïÒÑ¾­µ½ÁËÂä×ÓµÄÊ±»ú
+			// show_focus = true; // åªè¦åœ¨ä¸€ä¸ªåœ°æ–¹æœ‰ä¸ç­‰äº0çš„æƒ…å†µï¼Œå°±æœ‰çš„åƒ
+			// å¦‚æœæœ‰è½å­çš„åŠ¨ä½œï¼Œæˆ–è€…åœ¨è‡ªåŠ¨ç®—æ³•é‡Œå·²ç»åˆ°äº†è½å­çš„æ—¶æœº
 			dAll += (directionSeq[i].num);
 			if(down==true)
 			{
@@ -316,7 +316,7 @@ function check_it(x,y,theChessColor,down)
 					nX -= dir[i].dx;
 					nY -= dir[i].dy;	
 								
-					// ÕÒµ½·½Ïò¡¢¸öÊıÖ®ºó£¬¸Ä±äÂß¼­ºÍ½çÃæµÄÆåÅÌ¾ÖÃæ
+					// æ‰¾åˆ°æ–¹å‘ã€ä¸ªæ•°ä¹‹åï¼Œæ”¹å˜é€»è¾‘å’Œç•Œé¢çš„æ£‹ç›˜å±€é¢
 					pos_num = nX*8+nY;								
 					board[nX][nY] = theChessColor;
 					document.getElementById("ID"+pos_num).innerHTML="<img src=\"image/"+thePic+".gif\" width=\"32\" height=\"32\" border=\"0\" />";		
@@ -325,13 +325,13 @@ function check_it(x,y,theChessColor,down)
 		}
 		else if(board[nX][nY]!=theChessColor && (directionSeq[i].num)>0)
 		{
-			directionSeq[i].num = 0;// ÔÚÕâ¸ö·½ÏòÉÏ²»Ö¹Ò»¸öÒìÉ«µÄÆå£¬Ö±µ½Óö¼ûÆåÅÌ¿Õ°×	
+			directionSeq[i].num = 0;// åœ¨è¿™ä¸ªæ–¹å‘ä¸Šä¸æ­¢ä¸€ä¸ªå¼‚è‰²çš„æ£‹ï¼Œç›´åˆ°é‡è§æ£‹ç›˜ç©ºç™½	
 		}
 	}
 
 	if(down==true && dAll>0)
 	{
-		//ÏÂÒ»¿ÅÆå×Ó								
+		//ä¸‹ä¸€é¢—æ£‹å­								
 		board[x][y] = theChessColor;
 		putAchess(x,y,theChessColor);
 		pos_num = x*8+y;	
@@ -342,8 +342,8 @@ function check_it(x,y,theChessColor,down)
 }
 
 /**
-ÆÕÍ¨¼¶±ğµÄ»úÆ÷²ßÂÔ
-¸Ä±äÆåÅÌ¡¢Âß¼­Êı×é£¬ÕûºÏµ½Ò»Æğ£¬Èç¹ûÃ»ÓĞµØ·½Âä×Ó£¬ĞèÒª·µ»ØÒ»¸ö×´Ì¬
+æ™®é€šçº§åˆ«çš„æœºå™¨ç­–ç•¥
+æ”¹å˜æ£‹ç›˜ã€é€»è¾‘æ•°ç»„ï¼Œæ•´åˆåˆ°ä¸€èµ·ï¼Œå¦‚æœæ²¡æœ‰åœ°æ–¹è½å­ï¼Œéœ€è¦è¿”å›ä¸€ä¸ªçŠ¶æ€
 */
 function common_check(theChessColor,down)
 {
@@ -351,13 +351,13 @@ function common_check(theChessColor,down)
 	var mention_str;
 	var dAll = 0;
 
-	// ÇøÓòÈ¨ÖØÅÅĞò
-	// eval³öÑ­»·Óï¾ä
-	//£¨Ä¿Ç°£©×îÓÅÂä×ÓÇøÓò
+	// åŒºåŸŸæƒé‡æ’åº
+	// evalå‡ºå¾ªç¯è¯­å¥
+	//ï¼ˆç›®å‰ï¼‰æœ€ä¼˜è½å­åŒºåŸŸ
 
-	// Ò»±éËÑËØĞèÒª¹éÀà±í×÷Îª¸¨Öú£¬»®·ÖÇøÓò£¬Èç¹ûÊÂÇ°ÕÒµ½¿ÉÏÂÆåµÄÎ»ÖÃ£¬
-	// Õâ¸öÎ»ÖÃµÄ¼ÇÂ¼¾ÍÒª±£Áô£ºµ½¸üÓÅµÄÇøÓòÓĞÆå¿ÉÏÂ£¨»òÕßËµ¸üÓÅÇøÓòÈÔÃ»ÓĞËÑË÷Íê£©ÎªÖ¹£»ÔÚ¸üÓÅµÄÇøÓòµİÍÆÖ±µ½×îÓÅÇøÓò
-	// ¸ßÓÅÏÈµÄÇøÓòÃ»ÓĞ£¬¾ÍÖğ²½Ñ¡ÔñµÍÓÅÏÈµÄÇøÓò
+	// ä¸€éæœç´ éœ€è¦å½’ç±»è¡¨ä½œä¸ºè¾…åŠ©ï¼Œåˆ’åˆ†åŒºåŸŸï¼Œå¦‚æœäº‹å‰æ‰¾åˆ°å¯ä¸‹æ£‹çš„ä½ç½®ï¼Œ
+	// è¿™ä¸ªä½ç½®çš„è®°å½•å°±è¦ä¿ç•™ï¼šåˆ°æ›´ä¼˜çš„åŒºåŸŸæœ‰æ£‹å¯ä¸‹ï¼ˆæˆ–è€…è¯´æ›´ä¼˜åŒºåŸŸä»æ²¡æœ‰æœç´¢å®Œï¼‰ä¸ºæ­¢ï¼›åœ¨æ›´ä¼˜çš„åŒºåŸŸé€’æ¨ç›´åˆ°æœ€ä¼˜åŒºåŸŸ
+	// é«˜ä¼˜å…ˆçš„åŒºåŸŸæ²¡æœ‰ï¼Œå°±é€æ­¥é€‰æ‹©ä½ä¼˜å…ˆçš„åŒºåŸŸ
 	for(i=0; (i<8 && dAll==0); i=i+2)
 	{
 		dAll = check_it(VSet[i],VSet[i+1],theChessColor,down);	
@@ -390,10 +390,10 @@ function common_check(theChessColor,down)
 		}		
 	}
 
-	// down==true±íÊ¾ÒÑ¾­ÔÚÉÏÃæ¼ì²é£¬²¢ÇÒ³Ô×ÓÁË
+	// down==trueè¡¨ç¤ºå·²ç»åœ¨ä¸Šé¢æ£€æŸ¥ï¼Œå¹¶ä¸”åƒå­äº†
 	if(down==true && dAll>0)
 	{
-		// Ïû³ıdiv£¬id="mention"µÄÏÔÊ¾
+		// æ¶ˆé™¤divï¼Œid="mention"çš„æ˜¾ç¤º
 		//document.getElementById("mention").style.display="none";
 		
 		if(theChessColor==1)
@@ -405,21 +405,21 @@ function common_check(theChessColor,down)
 			whiteNum = whiteNum + dAll + 1;
 			blackNum = blackNum - dAll;		
 		}
-		// ¸Ä±äÏÔÊ¾µÄÆå×Ó¸öÊı
+		// æ”¹å˜æ˜¾ç¤ºçš„æ£‹å­ä¸ªæ•°
 		freshChessNum();	
 	}
 	else if(((blackNum+whiteNum)<64) && (dAll==0))
 	{
-		// ÔÚdiv£¬id="mention"£¬ÌáÊ¾theChessColor²»ÄÜÂä×Ó£¬ÊÇ·ñ½»»»ÏÂÆå·½£¬¿´Íâ²ãµ÷ÓÃÔõÃ´´¦Àí	
+		// åœ¨divï¼Œid="mention"ï¼Œæç¤ºtheChessColorä¸èƒ½è½å­ï¼Œæ˜¯å¦äº¤æ¢ä¸‹æ£‹æ–¹ï¼Œçœ‹å¤–å±‚è°ƒç”¨æ€ä¹ˆå¤„ç†	
 		if(theChessColor==1)
 		{
-			mention_str = "ºÚÆå";
+			mention_str = "é»‘æ£‹";
 		}
 		else
 		{
-			mention_str = "°×Æå";	
+			mention_str = "ç™½æ£‹";	
 		}
-		document.getElementById("result").innerHTML = mention_str + "²»ÄÜÂä×Ó£¬½»»»ÏÂÆå·½";
+		document.getElementById("result").innerHTML = mention_str + "ä¸èƒ½è½å­ï¼Œäº¤æ¢ä¸‹æ£‹æ–¹";
 		document.getElementById("result").style.display="block";
 	}
 	
@@ -427,7 +427,7 @@ function common_check(theChessColor,down)
 }
 
 /**
-»úÆ÷ÏÂÆå
+æœºå™¨ä¸‹æ£‹
 */
 function robot_run(client_color,robot_color)
 {
@@ -438,46 +438,46 @@ function robot_run(client_color,robot_color)
 	{
 		robot_chance = common_check(robot_color,true); 
 		
-		// »úÆ÷Âä×ÓÖ®ºó£¬Ò²¿ÉÄÜÈÃÁíÒ»·½µÄÆå»î¶¯
+		// æœºå™¨è½å­ä¹‹åï¼Œä¹Ÿå¯èƒ½è®©å¦ä¸€æ–¹çš„æ£‹æ´»åŠ¨
 		client_chance = common_check(client_color,false);
 		
-		// Èç¹ûÁíÒ»·½Ã»ÓĞ»î¶¯¿ÉÒÔ¸Ä±äÆåÅÌ£¬¶øÇÒ»úÆ÷Ò²Í¬Ñù²»ÄÜÂä×Ó
+		// å¦‚æœå¦ä¸€æ–¹æ²¡æœ‰æ´»åŠ¨å¯ä»¥æ”¹å˜æ£‹ç›˜ï¼Œè€Œä¸”æœºå™¨ä¹ŸåŒæ ·ä¸èƒ½è½å­
 		if( (robot_chance==0)&&(client_chance==0) )
 		{
-// Ë«·½¶¼²»ÄÜÂä×Ó£¬ÉèÖÃ±êÌâÏÔÊ¾Õâ¸ö×´Ì¬£¬Ğ´ÅäÖÃ¸æËßÖ÷¿Ø´°¿Ú£¬
-// Ò²¿ÉÒÔÕÚµ²Âä×Ó½çÃæ£¬ÍË³öÕâ¸öÑ­»·	
+// åŒæ–¹éƒ½ä¸èƒ½è½å­ï¼Œè®¾ç½®æ ‡é¢˜æ˜¾ç¤ºè¿™ä¸ªçŠ¶æ€ï¼Œå†™é…ç½®å‘Šè¯‰ä¸»æ§çª—å£ï¼Œ
+// ä¹Ÿå¯ä»¥é®æŒ¡è½å­ç•Œé¢ï¼Œé€€å‡ºè¿™ä¸ªå¾ªç¯	
 
 			if((blackNum+whiteNum)<64)
 			{
-				document.getElementById("result").innerHTML = "½©¾Ö";
+				document.getElementById("result").innerHTML = "åƒµå±€";
 				document.getElementById("result").style.display="block";
 			}
 			break;
 		}
 	}
 	
-	// ×ª»»ÏÂÆå·½ÎªnewChessColorÖ®ºó£¬ÔÚnewChessColor»¹ÓĞÂä×Ó²½ÊıÖ®Ç°£¬
-	// Ã¿´ÎÂä×ÓÖ®ºó£¬¾ÍÒªÅĞ¶Ï¶Ô·½µÄÂä×Ó¿ÉÄÜ£¬Ö»Òª¶Ô·½¿ÉÄÜÂä×Ó£¬ÄÄÅÂnewChessColorÒ²¿ÉÒÔÔÙÂä×Ó
-	// ¶¼ÒªÍË³öÑ­»·¼ì²é£¬°ÑÂä×ÓÈ¨½»»¹¸ø¶Ô·½
+	// è½¬æ¢ä¸‹æ£‹æ–¹ä¸ºnewChessColorä¹‹åï¼Œåœ¨newChessColorè¿˜æœ‰è½å­æ­¥æ•°ä¹‹å‰ï¼Œ
+	// æ¯æ¬¡è½å­ä¹‹åï¼Œå°±è¦åˆ¤æ–­å¯¹æ–¹çš„è½å­å¯èƒ½ï¼Œåªè¦å¯¹æ–¹å¯èƒ½è½å­ï¼Œå“ªæ€•newChessColorä¹Ÿå¯ä»¥å†è½å­
+	// éƒ½è¦é€€å‡ºå¾ªç¯æ£€æŸ¥ï¼ŒæŠŠè½å­æƒäº¤è¿˜ç»™å¯¹æ–¹
 	
-	// ÍË³öÒÔÉÏÑ­»·£¬ÒªÃ´Ë«·½½©³Ö£¬ÒªÃ´client»¹ÓĞ»ú»á£¬
-	// Èç¹ûµÚÒ»´Î°ÑÏÂÆåÈ¨×ª»»¸ø»úÆ÷£¬¾Í·¢Éú½©³Ö£¬ÄÇÃ´div£¬id="mention"µÄÏÔÊ¾Ò²Ã»ÓĞÏû³ı£¿
-	// Èç¹ûclient»¹ÓĞ»ú»á£¬ÔÚclientÂä×ÓÖ®Ç°£¬Ïû³ıdiv£¬id="mention"µÄÏÔÊ¾
+	// é€€å‡ºä»¥ä¸Šå¾ªç¯ï¼Œè¦ä¹ˆåŒæ–¹åƒµæŒï¼Œè¦ä¹ˆclientè¿˜æœ‰æœºä¼šï¼Œ
+	// å¦‚æœç¬¬ä¸€æ¬¡æŠŠä¸‹æ£‹æƒè½¬æ¢ç»™æœºå™¨ï¼Œå°±å‘ç”ŸåƒµæŒï¼Œé‚£ä¹ˆdivï¼Œid="mention"çš„æ˜¾ç¤ºä¹Ÿæ²¡æœ‰æ¶ˆé™¤ï¼Ÿ
+	// å¦‚æœclientè¿˜æœ‰æœºä¼šï¼Œåœ¨clientè½å­ä¹‹å‰ï¼Œæ¶ˆé™¤divï¼Œid="mention"çš„æ˜¾ç¤º
 	if(client_chance>0)
 	{
 		//document.getElementById("mention").style.display="none";
 		
 		if(myChessColor==1)
-			ContestStatus = "³ÖºÚ×Ó";
+			ContestStatus = "æŒé»‘å­";
 		else
-			ContestStatus = "³Ö°××Ó";
-		ContestStatus += ":" + "ÓĞÂäÆåµã";
+			ContestStatus = "æŒç™½å­";
+		ContestStatus += ":" + "æœ‰è½æ£‹ç‚¹";
 		document.getElementById("result").innerHTML = ContestStatus;		
 	}
 }
 
 /**
-tbodyÖĞ²åÈëÒ»ĞĞ
+tbodyä¸­æ’å…¥ä¸€è¡Œ
 */
 function insertRow(tbody,num)
 {
@@ -495,7 +495,7 @@ function insertRow(tbody,num)
 }
 
 /**
-trÖĞ²åÈëÒ»ĞĞ
+trä¸­æ’å…¥ä¸€è¡Œ
 */
 function insertCell(row)
 {
@@ -504,7 +504,7 @@ function insertCell(row)
 	return cell;
 }
 
-//É¾³ı×Ö½Úµã
+//åˆ é™¤å­—èŠ‚ç‚¹
 function deleteChild(par)
 {
 	var temp=new Array();
@@ -520,7 +520,7 @@ function deleteChild(par)
 }
 
 /**
-ÆåÅÌ¿ªÆôÓÃ»§ÏÂÆåÊÂ¼ş
+æ£‹ç›˜å¼€å¯ç”¨æˆ·ä¸‹æ£‹äº‹ä»¶
 */
 function OpenChessTableOnchess()
 {
@@ -528,7 +528,7 @@ function OpenChessTableOnchess()
 }
 
 /**
-ÆåÅÌÕÚÕÖÓÃ»§ÏÂÆåÊÂ¼ş
+æ£‹ç›˜é®ç½©ç”¨æˆ·ä¸‹æ£‹äº‹ä»¶
 */
 function CoverChessTableOnchess()
 {
@@ -540,7 +540,7 @@ function exitGame()
 	//System.Widget.Settings.writeString(CounterPartId+uId+"ContestStatus","");
 }
 
-//³õÊ¼»¯ÆåÅÌ
+//åˆå§‹åŒ–æ£‹ç›˜
 function initChessTable()
 {
 	var chessTable=document.getElementById("chessTable"); // tbody
@@ -548,9 +548,9 @@ function initChessTable()
 	//uId = GadgetGame.User.NickName;
 	//CounterPartId = window.name;
 	if(myChessColor==1)
-		ContestStatus = "³ÖºÚ×Ó:¿ª¾Ö";
+		ContestStatus = "æŒé»‘å­:å¼€å±€";
 	else
-		ContestStatus = "³Ö°××Ó:ÓĞÂäÆåµã";
+		ContestStatus = "æŒç™½å­:æœ‰è½æ£‹ç‚¹";
 	//ContestStatus += ":" + System.Widget.Settings.readString(CounterPartId+uId+"ContestStatus");
 	document.getElementById("result").innerHTML = ContestStatus;
 	
@@ -573,7 +573,7 @@ function initChessTable()
 			
 			//cell.innerHTML=num;
 			
-			board[i][j] = 0;  //Ã»ÓĞÆå×Ó			
+			board[i][j] = 0;  //æ²¡æœ‰æ£‹å­			
 			if ( ((i==3)&&(j==3)) || ((i==4)&&(j==4)))
 			{
 				board[i][j] = 1;
@@ -584,11 +584,11 @@ function initChessTable()
 				board[i][j] = 2;
 				cell.innerHTML="<img src=\"image/white.gif\" width=\"32\" height=\"32\" border=\"0\" />";
 			}
-			//ÔÚ³õÊ¼»¯ÒÔºó£¬ËùÓĞÆåÅÌ±ä»¯µÄ¹ı³ÌÖĞ£¬½«Êó±êÒÆ¶¯µ½ÈÎºÎÒ»¸öÎ»ÖÃ£¬Ó¦¸ÃÒª¸ù¾İÖÜÎ§ÅĞ¶Ï¸ÃÎ»ÖÃÊÇ·ñ¿ÉÒÔÏÔÊ¾targetÍ¼±ê
-			cell.onmouseover=function (){		//if ÖÜÎ§Ã»ÓĞ¿ÉÒÔ³ÔµÄ×Ó ÊÇÏÔÊ¾ÁíÒ»¸öÍ¼Æ¬
+			//åœ¨åˆå§‹åŒ–ä»¥åï¼Œæ‰€æœ‰æ£‹ç›˜å˜åŒ–çš„è¿‡ç¨‹ä¸­ï¼Œå°†é¼ æ ‡ç§»åŠ¨åˆ°ä»»ä½•ä¸€ä¸ªä½ç½®ï¼Œåº”è¯¥è¦æ ¹æ®å‘¨å›´åˆ¤æ–­è¯¥ä½ç½®æ˜¯å¦å¯ä»¥æ˜¾ç¤ºtargetå›¾æ ‡
+			cell.onmouseover=function (){		//if å‘¨å›´æ²¡æœ‰å¯ä»¥åƒçš„å­ æ˜¯æ˜¾ç¤ºå¦ä¸€ä¸ªå›¾ç‰‡
 				if(this.innerHTML.indexOf("img")==-1 && this.innerHTML.indexOf("IMG")==-1)
 				{
-					//ÒÑ¾­ÓĞÆå×Ó ²»ÄÜÔÙÏÂÁË
+					//å·²ç»æœ‰æ£‹å­ ä¸èƒ½å†ä¸‹äº†
 					this.style.cssText="cursor:default;background:url(image/target.gif)";
 				}				
 			};
@@ -599,8 +599,8 @@ function initChessTable()
 			{
 				if(this.innerHTML.indexOf("img")!=-1 || this.innerHTML.indexOf("IMG")!=-1)
 				{
-					//ÒÑ¾­ÓĞÆå×Ó ²»ÄÜÔÙÏÂÁË
-				}else                             //if ÖÜÎ§Ã»ÓĞ¿ÉÒÔ³ÔµÄ×Ó Ò²²»¿ÉÒÔÏÂ
+					//å·²ç»æœ‰æ£‹å­ ä¸èƒ½å†ä¸‹äº†
+				}else                             //if å‘¨å›´æ²¡æœ‰å¯ä»¥åƒçš„å­ ä¹Ÿä¸å¯ä»¥ä¸‹
 				{
 					var i;
 					var j;
@@ -609,17 +609,17 @@ function initChessTable()
 					var dAll;
 					var temp=this.id.substring(2);
 					var y=parseInt(temp%8);
-					var x=parseInt((temp-temp%8)/8);		//ÒÔÇ°µÄ×ø±ê×ª»»£¬¸ÕºÃÊÇÓëÕı³£Ë³ĞòÏà·´µÄ
+					var x=parseInt((temp-temp%8)/8);		//ä»¥å‰çš„åæ ‡è½¬æ¢ï¼Œåˆšå¥½æ˜¯ä¸æ­£å¸¸é¡ºåºç›¸åçš„
 					
 					dAll = check_it(x,y,myChessColor,true); 
-					if(dAll>0)// ÃüÖĞ²¢ÇÒµã»÷
+					if(dAll>0)// å‘½ä¸­å¹¶ä¸”ç‚¹å‡»
 					{						
-						//Èç¹ûÔÚ±¾»úºÍ»úÆ÷¶ÔÕ½£¬Ò²ĞèÒª½ûÓÃµã»÷ÊÂ¼ş£¬Ö±µ½»úÆ÷Ò²Âä¶¨Æå×Ó
+						//å¦‚æœåœ¨æœ¬æœºå’Œæœºå™¨å¯¹æˆ˜ï¼Œä¹Ÿéœ€è¦ç¦ç”¨ç‚¹å‡»äº‹ä»¶ï¼Œç›´åˆ°æœºå™¨ä¹Ÿè½å®šæ£‹å­
 						CoverChessTableOnchess();
 						this.style.cssText="cursor:default;background:url()"; //caution
 
-						// ¸ÄÎª´ÓÆåÅÌµÄ½Ç¶È£¬¿´µ½Ä³É«ÆåµÄ¸öÊı±ä»¯
-						// ½»»»ÏÂÆåË«·½											
+						// æ”¹ä¸ºä»æ£‹ç›˜çš„è§’åº¦ï¼Œçœ‹åˆ°æŸè‰²æ£‹çš„ä¸ªæ•°å˜åŒ–
+						// äº¤æ¢ä¸‹æ£‹åŒæ–¹											
 						if(myChessColor==1)
 						{
 							blackNum = blackNum + dAll + 1;
@@ -632,19 +632,19 @@ function initChessTable()
 							counterPartColor = 1;
 						}
 
-						// ¸Ä±äÏÔÊ¾µÄÆå×Ó¸öÊı
+						// æ”¹å˜æ˜¾ç¤ºçš„æ£‹å­ä¸ªæ•°
 						freshChessNum();	
 						
-						// »úÆ÷ÏÂÆå£¬Ê×ÏÈÒªÖªµÀ»úÆ÷µÄÆåÉ«
+						// æœºå™¨ä¸‹æ£‹ï¼Œé¦–å…ˆè¦çŸ¥é“æœºå™¨çš„æ£‹è‰²
 						robot_run(myChessColor,counterPartColor)
 						OpenChessTableOnchess();
 					}
 				}
 			};
-			//³õÊ¼»¯Ê±£¬¾Í¿É³õÊ¼»¯ÆåÅÌµÄ×´Ì¬£¬Í¬Ê±²åÈë¼¸¸öÆå×ÓÍ¼±ê
+			//åˆå§‹åŒ–æ—¶ï¼Œå°±å¯åˆå§‹åŒ–æ£‹ç›˜çš„çŠ¶æ€ï¼ŒåŒæ—¶æ’å…¥å‡ ä¸ªæ£‹å­å›¾æ ‡
 		}
 	}
-	//¿ªÊ¼»ñÈ¡ÓÃ»§×´Ì¬ĞÅÏ¢
+	//å¼€å§‹è·å–ç”¨æˆ·çŠ¶æ€ä¿¡æ¯
 	//getPlayerStatus();
 }
 
@@ -721,7 +721,7 @@ function SettingOk()
 	
 	if(myChessColor==2)
 	{
-		// »úÆ÷ÏÂÆå£¬Ê×ÏÈÒªÖªµÀ»úÆ÷µÄÆåÉ«
+		// æœºå™¨ä¸‹æ£‹ï¼Œé¦–å…ˆè¦çŸ¥é“æœºå™¨çš„æ£‹è‰²
 		counterPartColor = 1;
 		robot_run(myChessColor,counterPartColor);
 	}
