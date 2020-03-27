@@ -1,0 +1,42 @@
+好，在了解了什么是vue-cli之后，我们接下来就安装它。
+安装它之前，我们先node -v，看一下node版本。我们要确保node版本是在4以上。4版本有一个稳定版本是4.4.5
+也要提醒同学们，如果node版本低于它，也要升级到4以上。node安装我们这节课就不介绍了。应该是比较基础的。
+安装玩node之后，我们执行：sudo npm install -g vue-cli
+它就开始安装了，但是我们要讲一下sudo命令，在mac环境下需要用的，它有一些权限相关，提升它的用户权限。
+如果是windows环境就可以省略这个。直接执行npm install就可以了。
+这里就安装完了，我们看一下，运行一下vue命令，我们可以看到vue命令是已经安装了。
+它告诉你的用法：vue <command> [options]，command包括这几个。
+我们可以执行一个vue list看一下，它这里面列出了你可以用的一些官方模板。
+那我们通过vue init去安装，vue init webpack，我们用webpack模板，然后我们起个名字vue init webpack sell。
+这门课的项目是做一个外卖app，所以我们就起名叫sell，好，它就在运行了。
+这里，你看，执行了download，在下载。
+好，project name，默认是sell。我们就ok。回车。
+project description，也就是描述，我们先随便写一个sell app。
+然后author，也就是这个作者名字，也就是说，它会把这个自动生成到你的package.json里。回车。
+Use ESLint to lint your code？ESLint也就是我们之前提到过，ES6的代码风格检查器。我们这里是需要的，所以Y。
+BNB，这就是它的一个Standard，这个是一个模板，这里是ESLint的preset预设的一个选项，我们这里用标准的就可以了。
+Setup unit test with karma or mocha，这个是前端一个单元测试库，由于我们做的是一个GUI项目，也就是基于界面的。
+我们更多可能需要去界面上测试，所以我们这里把单元测试这一块忽略。
+e2e test 我们也是不需要的。
+好，这样的话我们的模板就已经生成好了，我们可以看一下，ls命令，可以看一下，当前目录下，就会自动生成一个：
+刚才我们project name叫sell这样一个目录。
+然后，这个vue-cli做得非常好，它还很贴心，当你执行完刚才那个脚手架安装这些模板之后，它会告诉你怎么用：
+to get started:
+cd sell，就是你进入这个目录。
+然后执行npm install，这个是安装模块下代码的依赖。
+然后执行npm run dev，去运行。
+好，我们先来按它所示去搞一下：cd sell 进来了可以看一下，ll -a看一下：
+你看这个目录结构，这就是脚手架生成的一个目录结构，跟我们当时看到webpack template结构是一致的。
+好，我们再执行npm install，sudo npm install，这个install过程可能会比较漫长，因为它依赖的东西比较多。
+我们这里可以稍微等一会，一般来说像一个项目它都是这种玩法，就是：
+它会把自己的一些基本代码写好，会有一个package.json，这个文件，稍后我们也会介绍，
+它里面有一个depandencies和dev depandencies两个配置，选项，再到里面就可以生成这个项目的依赖。
+dev depandencies就是一个开发时的依赖，depandencies就是一个运行时的依赖。
+这些，之后我们会详细地介绍。可以再等一会。好，这里有反应了，好，这样我们就安装成功了。
+安装成功了以后，
+我们可以看一下，安装成功后，ll -a这里面和刚才比起来，它多了一个node_modules目录，这个目录，我们可以进去看一下：
+这个目录就是有一些，很多目录，这就是我们依赖的这些代码库，我们可以在我们代码中，引用它们、使用它们。
+之后，我们会挑一些重点去讲一下：回到当前sell主目录，我们再运行：
+我们再按刚才它说的命令：npm run dev，可以看到，这里，它执行一个node build/dev-server.js，
+然后有一个Listening at http://localhost:8080，说明它已经启动了一个server，监听了8080端口。
+好，我们看一下，去界面上看一下，localhost:8080，可以看到，我们的一个vue.js项目就这样启动了。
