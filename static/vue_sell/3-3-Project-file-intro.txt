@@ -1,0 +1,75 @@
+vue-cli的安装，接下来，我们都来看一下，安装后的项目都有哪些文件？
+我们先来看一下，一级目录，这里有build和config目录，这里面都是webpack配置相关。
+这里我们先不看具体文件，之后，我们会详细介绍。
+node_modules就表示我们通过npm install安装的依赖代码库。
+src目录，存放项目源码。
+这里要注意，我们开发所有代码，都会放在src目录下，稍后，我们也会详细介绍这里面的文件。
+static目录是存放一些第三方静态资源的，这里我们看到，只有一个.gitkeep文件。
+这个文件作用是，当这个目录为空，也可以把这个目录提交到git代码仓库里。
+因为通常如果你创建一个空目录，.git会忽略掉这个目录，它是不会提交到仓库里的。
+那看完了一级目录，我们再来看一下，当前目录下的文件：
+.babelrc它是babel的一些配置，因为我们的代码都是es6，而大部分浏览器是不能直接支持es6语法的，
+所以我们通常的做法是把es6通过barbel编译成es5，
+而.babelrc文件就是babel的一些配置，其中，preset表示预设，这里有es2015和stage-2，
+它表示babel转换预先需要安装的一些插件，那stage-2它是表示ECMA的草案，它总共有四个阶段：
+从0到3，stage-0表示stage-0到stage-3，stage-2表示stage-2到stage-3，也就是说数字越小它包括的东西越多。
+我们来可以看一下这两个插件：
+在node_modules这里面，我们可以看到：babel-preset-es2015，它的作用是，我们可以在其下的node_modules里看到：
+它有一些插件，比如说：babel-plugin-check-es2015-constants，
+比如说：babel-plugin-transform-es2015-arrow-function就是把es6的箭头函数做编译，编译成es5的代码。
+还有：babel-plugin-transform-es2015-classes这就是把es6的classes编译成es5的类的定义方式。
+再看看babel-preset-stage-2，可以看到它的依赖node_modules，包括babel-preset-stage-3，
+这里面又包括了一些插件，也就是说，这里面的插件，就是包括这一些，在babel-preset-es2015这里面没有的一些es6的语法。
+我们可以在babel-preset-stage-3子目录node_modules里包括的插件做转换。
+回到.babelrc，那除了一些预设插件，它还有一些插件，通过plugins去配。
+这里有一个transform-runtime，它是可以把es6的一些方法做转换，也来看一下，
+我们可以看到从顶层node_modules里面，有一个babel-plugin-transform-runtime，它的lib里面有definitions.js，
+这里面其实就是对于像es6的Symbol、Map、或者是它的Array扩展的一些方法，比如说Array from做的一些扩展，
+那它的具体实现，其实是在：我们可以看看它(babel-plugin-transform-runtime)的package.json：
+这里可以看到，它依赖了dependencies:{babel-runtime}，那从顶层node_modules里面，有babel-runtime，
+里面的core-js，比如说array.from.js，这里就会定义具体它的实现，它又依赖require("core-js/library/fn/array/from")。
+具体的代码，我们就可以下来，同学们自己去研究了。
+也就是说，babel依赖了这些插件，这些插件真正地做了一些转换的代码。
+好，.babelrc最后的一个是"commets"这一个配置，false表示转换后代码不生成注释。
+看完这个，再看.editorconfig，这个很简单，它就是编辑器的一些配置。
+charset表示编码，indent_style表示缩进风格，它是基于空格做缩进的，indent_size=2是表示缩进的大小是2个，
+vue.js代码风格就是2格缩进，end_of_line这是表示一个换行符的风格，lf就是Linux和mac换行符的风格，
+insert_final_newline它就表示当你创建一个文件，自动会在文件末尾插入一个新行。
+trim_trailing_whitespace为true，这个表示会自动移除行尾空格。
+我们看完了.editorconfig，再看.eslintignore，忽略语法检查的目录文件，
+buile/*.js
+config/*.js
+忽略对这两个文件夹下的js文件做语法检查。
+然后是eslintrc.js，这个是eslint的配置文件，这里我们重点看一下：extends，和rules这两个选项。
+extends: 'standard'表示继承一个标准的规则，这个standard也是我们用vue-cli在创建项目的时候选的。
+然后，它预先定义了很多规则，我们可以去这个注释里标明的网络地址看一下，它这也是一个GitHub地址，
+这里面，它就定义了一些规则，比如说，像这个if语句，这个表示括号前必须要有空格，如果说紧贴是不合法的。
+比如说，我们强烈要求要用===，而不用==。
+这里面有很多，预先定义好的规则，然后具体的话，同学们下来可以自己去这个地址看一下。
+好，再回到eslintrc.js，我们除了继承它的标准规则，也可以通过rules对一些具体规则部分做修改。
+比如说，这里面，它就修改了三个规则，arrow-parens为0表示箭头函数允许它前面不写括号。
+那allow async-await其实就是用在async-await，就是这个generator-star-spacing为0，
+我们看这些为0，就是表示忽略对这些规则进行检查，这标明我们的代码命中了某个规则，编译不过的时候，
+我们这些规则是不想要的，我们就把相应的规则配置为0，最后一个是no-debugger，同学们在编写代码的时候，
+可能都会用到debug，作为调试，那no-debugger就是不允许在代码中出现debugger选项，
+因为你把debugger上到线上，是一个非常危险的事情，所以说这里面，它做了个判断，
+process.env.NODE_ENV === 'production'当前环境如果是开发环境，它就可以去debugger，
+如果是生产环境，那就不允许去debugger。
+好，看完了eslint这些配置、规则，我们在看一下.gitignore，这个也很简单，
+这个就是git仓库忽略掉这些文件或目录，这些不会提交到代码里面，
+index.html这个是我们入口的html文件，我们看这个文件非常简单，这里面没有依赖任何js或css，
+那是因为我们引用的资源，其实都会在我们项目编译过程中，自动会插入到这个html文件里面，
+那稍后，介绍到webpack编译的时候，我们会说到它是怎么插进来的。
+那package.json这就是我们项目的一个配置文件，它一般是用来描述一个项目，前面这些配置，
+都是在我们用vue-cli初始化模板的时候，填入的一些信息，这里面script是表示我们可以执行的一些命令，
+比如说我们运行了npm run dev，其实就是执行了这句代码："dev": "node build/dev_server.js"
+那，如果我们在外面执行了npm run build的话，就会执行："build": "node build/build.js"
+所以说我们可以通过scripts去配置一些脚本。
+好，dependencies就是表示这个项目生产环境下的依赖，比如收它依赖vue，"vue": "^1.0.21"
+我们看到依赖的是1.0.21，我们知道最新的版本是1.0.26，那这边有一个向上的箭头，这个是表示它可以安装到：
+从1.0.21开始一直到2.0最新的版本，我们可以看到它最终安装的版本：在node_modules里vue的package.json，
+实际安装的版本是1.0.26，也就是说我们在代码里用这种语法去写依赖的时候，我们表示最低安装的版本，是1.0.21，
+好，回到package.json，devDependencies是表示我们编译过程的一些依赖，比如说babel，这些都是编译需要的。
+eslint也是在编译的过程中需要的。还包括express，我们可能需要express的服务器，然后webpack，webpack-dev-middleware，webpack-hot-middleware，等等这些插件是编译时候我们用的。这些插件在我们上线之后，打包运行的代码是不存在的。
+好最后一个文件就是readme，很简单，它其实就是项目的一些描述文件。
+
