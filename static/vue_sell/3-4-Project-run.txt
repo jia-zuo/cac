@@ -1,0 +1,101 @@
+在了解了项目文件后，我么来了解一下当前代码是如何运行的。
+刚才我们提到它的入口文件是index.html，再来看看这个html。
+我们知道它的js和css是会被动态插入到这个页面的。
+那我们来看一下这个页面的DOM结构，在body下面，我们看到只有app这个标签。
+这个标签，并不是原生html标签，它实际上是一个vue的组件。
+我们页面，它的入口js是src目录下的main.js。
+看一下main.js，这里有个标红的红线，这是因为我们webstorm配置问题，它现在配置的语法应该是es5的语法。
+这es6的语法它不识别，就会导致标错，我们可以通过
+preference->language & frameworks->JavaScript->JavaScript language version
+改成ECMAScript6，es6的语法就能够识别了。
+如果同学们的编译器是webstorm的话，可以这样配一下。
+我们可以看到这个入口文件，它依赖了两个：Vue也就是Vuejs库、 还有App是App.vue。
+其实写成import App from './App.vue' 是一样的。
+为了简便，我们通常不会带这个后缀名。
+它依赖这个App.vue，然后这里面通过new Vue({})，new了一个Vue的实例。
+el: 'body'其中el表示element，是一个挂载点，挂载到body上。
+component: {App}就是注册了一个当前import App的插件。
+我们可以看到这个语法，这个语法就是es6的一个简写，对于es5是componet: {App:App}。
+我们可以通过es6对象的这种写法，去简化我们的书写。
+然后我们知道这个Vue是依赖App，我们再看看这个App.vue的实现：
+每一个组件，它分为三个部分：<template> <script> <style>，
+顾名思义，style就是它的一些样式，template就是模板，script就是它的一些执行逻辑。
+我们先看看App.vue它的页面结构。
+template，它下面有一个div，id为app的div。下面一个<img class="logo" src="./assets/logo.png">，
+我们可以从浏览器打开元素，看看它的页面结构：这是一个id为app的div，div下面有imagelogo，
+接着看App.vue，那这个<hello>，又是一个vue组件，这个组件定义在src/components/Hello.vue，
+我们可以在下面看到，在这个App.vue的一个实例里面，它又通过：
+export default{
+  components: {
+    Hello
+  }
+}
+注册了一个组件Hello，我们一定要注意，我们必须要通过这个components属性，注册，我们才可以在上面使用这个<hello>标签。否则是不行的。比如说，我们把 Hello注释了，然后我们重新从页面看一下，这个页面报错了。
+这个是no-unused-vars，这是es6的一个报错，
+你用到了一个import，将import一行注释，报错：spaced-comment，这个意思是，这也是个规范，这个注释必须跟一个空格。
+我们保存一下，这东西还是能正常显示，说明es6的规范已经通过了。
+我们今后的代码中，可能会遇到各种这样es6的代码检查，我们可以一个一个去详细解决。
+再一点，也有助于我们代码的规范和统一。比如说这个注释，后面不跟空格就是不符合规范。我们希望注释也有规范，就是加一个空格。
+这样，我们整个代码就可以统一风格。阅读也会看起来比较舒服。
+好，回到正题，我们看到这又报错了，Unknown custom element，不识别的一个自定义标签hello，
+did you register the component correctly?是问你有没有正确注册这个组件？
+所以，我们这里必须要先注册再使用，好，我们把注释都恢复，保存，还是在报错：indent缩进问题，这个缩进问题也是一个编码规范。
+我们用到webstorm有一个Command+Option+L对应windows的Ctrl+Alt+L，是自动格式化的快捷键，我们可以把代码直接格式化，这样就ok了。
+我们这里直接保存代码，这里就自动刷新，这其实也利用了一个webpack的hot-reload插件，之后我们会再介绍。
+好，我们回到这个代码结构，这个<hello></hello>对应的就是一个Vue的组件，那我们再看一个hello的实现：
+它的实现非常简单，它就是一个div
+<template>
+  <div class="hello">
+    <h1>{{ msg }}</h1>
+  </div>
+</template>
+标题里的msg对应
+<script>
+export default {
+  data () {
+    return {
+      msg: 'Hello World!'
+    }
+  }
+}
+</script>
+这个在基础课程中，相信同学们都已经知道了。
+我们在一个vue的定义里面去定义一个data ()这个function，它可以return一个object。这个object里面所有值都会添加到它的依赖之中。
+然后我们在模板里面去访问这个msg，就可以访问到这个data里的msg，所以这里就可以访问到'Hello World!'
+我们这里改动'Hello World!'为'Hello Vue'，这里不能hot-reload，我们可以重新npm run dev，还要等等，这里其实有一个编译过程。
+编译完成后，再刷新页面，可以看到改动生效。
+好，再回到代码，这个组件非常简单，这个组件其实也有三块：
+<template> <script> <style>
+Hello.vue一个组件，通过export default一个object这种方式，可以通过object去定义一个组件，
+在App.vue里，通过import Hello from './components/Hello'，
+也就是说我们刚才那个object就会赋值给import的Hello，这个Hello就是那样一个对象，
+App.vue里的
+export default {
+  components: {
+    Hello: Hello// es5 的写法  
+  }
+}
+components它的key就是Hello，然后它的值就是刚才export default出来的那个值。
+那为什么我们可以使用小写hello：<hello></hello>
+这是因为，标签是对大小写不敏感的，所以你这边用大小写都行，
+在App.vue的<hello>下面就是一些文字，然后有一些链接，跟这些都一一对应，就没什么好说的了。
+也就是说，我们要记住一点就是：编写一个组件，它通常有几个步骤：
+首先，我们创建一个文件，*.vue文件，下面有三块：
+<template> <script> <style>
+也就是说我们写好了这三块以后，我们在<script>通过export default把它导出，导出一个对象，这个对象里面就是一些vue的选项、属性之类。
+这是这个vue怎么定义。
+然后我们使用它的时候，我们一定要在App.vue的<script>里的这个组件里，通过components这个属性，去注册，
+同时，我们用import去引用，其实是先引用，再注册，这样的话，我们就可以在<templdate>里用标签<hello>，就可以直接使用了。
+所以我们在这里面：index.html也就可以用<app>这个标签，那是因为我们在src/main.js里注册了这个app。
+在App.vue里可以用<hello>是因为在App.vue里注册了Hello，所以我们这个代码就这样可以运行了。
+我们看一下最终生成的代码：
+我们可以看看request，刷新一下，选devtools的Network，可以看到，这里面加载了三个文件：localhost、app.js、和__webpack_hmr
+localhost就是这个主页面，app.js就是它打包后生成的代码，我们看到这里没有任何css，那是因为webpack做打包的时候，把css也打包到了js里面。
+可以看到这个app.js非常大，有1.0MB，天哪，你写一个vue，一个HelloWorld都要一个兆代码，怎么这么夸张？
+实际上是因为我们把那些es6语法，在运行时做了一个解析，transform插件，也就是说这里有很多在线解析es6语法的poly fill,所以它的文件非常大。
+我们大可不必担心，因为最终我们到生产环境的时候，我们不会用app.js这个文件，而我们会编译，把那些es6离线编译，编译成es5的语法。
+这样的话文件不会有多大。
+这个__webpack_hmr是hot-reload的一个东西，也可以先不用管它。
+好，我们现在就可以知道一个Vue.js是怎样运行的。
+接下来我们来看一下，webpack是如何做打包的。
+
