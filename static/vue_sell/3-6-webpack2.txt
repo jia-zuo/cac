@@ -1,0 +1,317 @@
+好，回到build目录，./webpack.base.conf：
+那这个publicPath，表示请求的静态资源绝对路径，
+config.build.assetsPublicPath也就是config目录下index.js中build.assetsPublicPath，
+也就是根目录的路径，
+这个output里的filename就是它输出的一个文件名称，
+这里用[name]对应entry的一个key：app: './src/main.js'，
+最终生成的name也就是app.js，
+所以我们在页面中引用的app.js就是这么得来的；
+
+那resolve这些配置，它都是关于我们在代码中，通过require或者是es6、import模块的一些相关配置，
+extensions就表示，我们可以在require模块路径中自动补全文件后缀，比如说可以补全.js、.vue文件，
+如：src/main.js里：import App from './App'我们可以不用去写那个后缀，因为他会自动给我们补全，
+这个配置就是做这些应用...
+
+然后这个fallback
+resolve:{
+    fallback: [path.join(__dirname, '../node_modules')],
+}
+node_modules文件夹，指向node_modules这个模块，
+也就是说当我们在前端require模块找不到的时候，就可以像node.js里一样从node_modules里去找这个模块，
+
+然后这个alias就是提供一些别名
+resolve: {
+    alias: {
+        'src': path.resolve(__dirname, '../src'),
+        'assets': path.resolve(__dirname, '../src/assets'),
+        'components': path.resolve(__dirname, '../src/components')
+    }
+},
+也就是我们require模块路径中，我们可以通过别名，去缩短整个路径中的字符串长度，
+
+resolveLoader: {
+  fallback: [path.join(__dirname, '../node_modules')]
+},
+这里的fallback和上面的fallback功能是类似的，
+
+接下来，我们来看module的配置，
+module: {
+  preloaders: [
+    {
+      test: /\.vue$/,
+      loader: 'eslint',
+      include: projectRoot,
+      exclude: /node_modules/
+    },
+    {
+      test: /\.js$/,
+      loader: 'eslint',
+      ...    
+    }
+  ]
+  loaders: [
+    {
+      test: /\.vue$/,
+      loader: 'vue'
+    },
+    {
+      test: /\.js$/,
+      loader: 'babel',
+      include: projectRoot,
+      exclude: /node_modules/
+    },
+    {
+      test: /\.json$/,
+      loader: 'json'
+    },
+    {
+      test: /\.html$/,
+      loader: 'vue-html'
+    },
+    {
+      test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+      loader: 'url',
+      query: {
+        limit: 10000,
+        name: utils.assetsPath('img/[name].[hash:7].[ext]')
+      }
+    },
+    {
+      test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+      loader: 'url',
+      query: {
+        limit: 10000,
+        name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
+      }
+    }
+  ] 
+}
+preloaders和loaders作用是类似的，
+都是对某种类型的文件应用loader去做处理，
+其实我们说到的webpack编译阶段，就是利用各种loader对各种文件做编译，
+它会扫描当前的工程目录，然后根据后缀名是否匹配某种类型的文件，
+文件内容做输入对应的loader或文件内容做一番处理输出新的文件内容，
+这两个不同的是：preloaders它会在loaders之前处理，我们看preloaders，
+它会对.vue和.js两种文件利用了eslint这个loader做处理，
+
+接下来我们来看一下loaders，
+它首先会对.vue文件用vue loader做处理，
+对.js文件用babel loader做处理，
+这里我们看到有include和exclude选项，
+include表示它只检查目录下的一些文件，只对这下面的一些文件做编译，
+exclude是排除这些目录，
+比如说对node_modules里的js文件，我们不需要做eslint检查，不需要做babel编译
+
+然后，这里有一些图片文件，它是用url loader处理，
+这里有一个query，它包含了limit和name属性，
+limit表示当图片的文件大小小于10kb的时候，它会生成一个base64串，打包到编译后的js文件里，
+超过10kb的话，就会单独生成一个图片文件，这个文件的命名规则就是utils.assetsPath方法来生成的，
+我们打开 build/utils.js，找到exports.assetsPath，其中有config.dev.assetsSubDirectory，
+于是我们打开 config/index.js，找到如下：
+module.exports = {
+  dev: {
+
+    // Paths
+    assetsSubDirectory: 'static',
+    assetsPublicPath: '/',
+    proxyTable: {},
+查找到是static，那么文件名的规则就是static/img/[name].[hash:7].[ext]
+
+再来解读webpack.base.conf.js文件里随后的
+  eslint: {
+    formatter: require('eslint-friendly-formatter')
+  },
+  vue: {
+    loaders: utils.cssLoaders()
+  }
+这个eslint的formatter配置，就是当前eslint检查到错误的时候，
+它会友好提示一个错误信息，并提供一个es6规则的官网链接，会去查看错误原因，
+最后一个vue loaders，这是关于文件中的一些css出现后的loader
+可以看到之前的loaders里并没有关于css的处理，所有css loader相关的文件都在这里配置，
+我们可看到在build/utils.js文件中：
+exports.cssLoaders = function (options) {
+  options = options || {}
+
+  const cssLoader = {
+    loader: 'css-loader',
+    options: {
+      sourceMap: options.sourceMap
+    }
+  }
+...
+这个方法里又定义了一个generateLoaders函数，
+exports.cssLoaders函数可返回一个对象，
+这个对象就是各种css相关预处理器名称，都是调用generateLoaders生成的值，
+来看一下这个generateLoaders函数，它是遍历我们插入？的一个loaders名称数组，
+然后通过判断这个数组中的元素字符串，最终拼接成一个loader，
+这样实际上就是生成css预处理器对应的loader
+
+我们本次项目开发使用的是stylus，那么就会生成一个：
+首先是vue-style-loader，然后是css loader，然后是stylus loader
+
+到这里我们就大概了解webpack.base.conf.js这个文件所做的事情，
+它其实就定义了一些wepack基本配置，
+
+接下来让我们回到webpack.dev.conf.js文件，可以往下看，
+// add hot-reload related code to entry chunks
+Object.keys(baseWebpackConfig.entry).forEach(
+  funtion (name) {
+    baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(baseWebpackConfig.entry[name])  
+  }
+)
+这里，这段代码里，entry变成了一个数组，
+查看文件webpack.base.conf.js有如下代码段：
+module.exports = {
+  context: path.resolve(__dirname, '../'),
+  entry: {
+    app: './src/main.js'
+  },
+这里的entry有'./src/main.js'，那这个它是做什么用的？
+它实际上启动了hot-reload related code（相关代码），那么hot-reload是什么？
+它是一种热加载的技术，它的作用就是，当我们改变了一些源码，在浏览器不用刷新的情况下，也能看到我们改编的效果，
+那如果这个过程失败了，它就自动刷新浏览器，这个过程听上去是一个非常酷的，能方便我们开发，
+接下来：
+module.exports = merge(baseWebpackConfig, {
+  module: {
+    loaders: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap })
+  },
+  // eval-source-map is faster for development
+  devtool: '#eval-source-map',
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': config.dev.env    
+    }),
+    // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin(),
+    // http://github.com/ampedandwired/html-webpack-plugin
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      ...
+    })
+  ]
+})
+把baseWebpackConfig和当前配置做一个合并，那我们来看一下这里有一个配置：
+首先这里配置了一个loaders，然后调用了一个utils.styleLoaders(在utils.js文件中定义)
+再来看config.dev.cssSourceMap这段代码，需要查看config/index.js
+  dev: {
+    ...
+    ...
+    ...
+    /**
+     * Source Maps
+     */
+
+    // https://webpack.js.org/configuration/devtool/#development
+    devtool: 'cheap-module-eval-source-map',
+
+    // If you have problems debugging vue-files in devtools,
+    // set this to false - it *may* help
+    // https://vue-loader.vuejs.org/en/options.html#cachebusting
+    cacheBusting: true,
+
+    cssSourceMap: true
+  },
+cssSourceMap的相对路径如果有bug，默认是被关闭的，这使我们在开发时不能看到css的SourceMap，
+
+再接着看utils.styleLoaders(在utils.js文件中定义)
+在styleLoaders上方定义的exports.cssLoaders(options)生成了一个page，
+再对这个page进行遍历，它就拿到这些扩展名，而这些扩展名最终就生成了output，
+output就是对这些扩展名的文件做什么，然后它调用相关的loader做处理，
+
+这是什么意思？因为我们刚才是在这个里面：
+再来解读webpack.base.conf.js文件里随后的
+  eslint: {
+    formatter: require('eslint-friendly-formatter')
+  },
+  vue: {
+    loaders: utils.cssLoaders()
+  }
+对vue文件里的css用了loader，
+但我们并没有处理单独的css文件，所以在webpack.dev.conf.js里我们可以看到：
+module.exports = merge(baseWebpackConfig, {
+  module: {
+    loaders: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap })
+  },
+  // eval-source-map is faster for development
+  devtool: '#eval-source-map',
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': config.dev.env    
+    }),
+    // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin(),
+    // http://github.com/ampedandwired/html-webpack-plugin
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'index.html',
+      ...
+    })
+  ]
+})
+我们调用了这个utils.styleLoaders就相当于对一些独立的css包括它们的预处理文件做了一个编译，
+那我们接着往下看，这里有一个devtool，这是一些开发时方便我们做源码调试用的，
+接下来就是定义了一堆插件，
+    new webpack.DefinePlugin({
+      'process.env': config.dev.env    
+    }),
+就是把源码中的字符串'process.env'替换成config.dev.env
+可以查看文件config/index.js中以前定义的：
+dev: {
+  env: require('./dev.env'),
+  port: 8080,
+  assetsSubDirectory: 'static',
+  assetsPublicPath: '/',
+  proxyTable: {},
+  cssSourceMap: false
+}
+根据路径'./dev.env'查看文件config/dev.env.js
+module.exports = merge(prodEnv, {
+  NODE_ENV: '"development"'
+})
+也就是合并了product Env，查看文件config/prod.env.js
+module.exports = {
+  NODE_ENV: '"production"'
+}
+最后在文件config/dev.env.js中输出了这样一个对象：值为development，
+这样我们的源码就可以基于这个东西做一些判断，开发时和运行时的一些判断，
+
+再回到webpack.dev.conf.js
+module.exports = merge(baseWebpackConfig, {
+  module: {
+    loaders: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap })
+  },
+  // eval-source-map is faster for development
+  devtool: '#eval-source-map',
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': config.dev.env    
+    }),
+    // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin(),
+    // http://github.com/ampedandwired/html-webpack-plugin
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'index.html',
+      inject: true
+    })
+  ]
+})
+这个new webpack.optimize.OccurenceOrderPlugin()，
+这是webpack优化相关的插件，根据打包后模块使用的频率，对经常被使用的模块分配一个最小的id，作用不是很大，
+new webpack.HotModuleReplacementPlugin()，
+这是我们刚才提到的一个Hot-reload热加载有关的插件，
+new webpack.NoErrorsPlugin()，
+这是当我们编译出现错误的以后，会跳过那一段编译的代码，然后，使编译后什么运行的包什么不会？发生错误，
+最后是一个HtmlWebpackPlugin，这个plugin非常关键，
+它可以通过filename指定编译后生成的html文件名，template指定我们要处理的模板，
+inject: true表示我们在打包过程中生成的一些js和css文件，它的路径就直接会添加到html文件里面，
+然后我们css文件的路径会默认添加到head标签里面，
+js文件的路径会默认插入到body？里面？
+
+
