@@ -1,0 +1,98 @@
+我们再回到一开始的入口dev-server.js
+好，我们看这里，这里定义了一些端口号：
+var port = process.env.PORT || config.dev.port
+可以从process环境变量中去取，
+也可以参照config/index.js中的dev.port，port: 8080
+接着看dev-server.js
+// Define HTTP proxies to your custom API backend
+// https://github.com/chimurai/http-proxy-middleware
+var proxyTable = config.dev.proxyTable
+拿到一些需要去代理的接口，你的业务需要哪些接口被转发，就可以在index.js中配置
+接着看dev-server.js
+var app = express()
+var compiler = webpack(webpackConfig)
+我们通过启动一个express，给这个app对象，
+接着调用了一个webpack方法，去编译，然后把webpackConfig传入它得到是一个compiler，这个compiler实质上是给如下
+var devMiddleware = require('webpack-dev-middleware')(compiler, {
+  publicPath: webpackConfig.output.publicPath,
+  stats: {
+    colors: true,
+    chunks: false
+  }
+})
+webpack-dev-middleware这个中间件指定了什么资源的访问目录：webpackConfig.output.publicPath，
+可以在浏览器里看到：
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>sell</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  <script type="text/javascript" src="/app.js"></script></body>
+</html>
+src="/app.js"可以访问到，
+接着，我们再说一下这个中间件，这个中间件是非常强大的，
+我们调试运行了这个项目，其实我们没有在当前目录下看到这个编译好的文件，
+也就是说虽然我们在代码里也请求了这个app.js，也访问了这个什么，但我们在当前目录下并没有，
+实际上这个中间件把编译好的文件放在了内存里，我们刚才访问的实际都是对内存做访问，这是非常强大的功能，
+
+
+var hotMiddleware = require('webpack-hot-middleware')(compiler)
+// force page reload when html-webpack-plugin template changes
+compiler.plugin('compilation', function (compilation) {
+  compilation.plugin('html-webpack-plugin-after-emit',function(data, cb){
+    hotMiddleware.publish({ action: 'reload' })
+    cb()  
+  })
+})
+接下来，就是webpack-hot-middleware，它就是express和webpack的hot-reload插件做配合的一个中间件
+
+// proxy api requests
+Object.keys(proxyTable) forEach(function (context) {
+  var options = proxyTable[context]
+  if (typeof options === 'string') {
+    options = { target: options }
+  }
+  app.use(proxyMiddleware(context, options))
+})
+这里就是对代理做转发的一些操作，它使用了中间件proxyMiddleware
+
+接下来就是对中间件做使用了，
+// handle fallback for HTML5 history API
+app.use(require('connect-history-api-fallback')())
+
+// serve webpack bundle output
+app.use(devMiddleware)
+
+// enable hot-reload and state-preserving
+// compilation error display
+app.use(hotMiddleware)
+
+
+// serve pure static assets
+var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
+app.use(staticPath, express.static('./static'))
+查看config/index.js
+dev.assetsPublicPath为'/'
+dev.assetsSubDirectory为'static'
+配置了静态资源的访问位置，
+最后，我们可以在这个代码里看一下，现在还没有用到static资源，我们在开发项目的时候，再看，
+然后，通过启动这个express，
+
+module.exports = app.listen(port, function (err) {
+  if (err) {
+    console.log(err)
+    return
+  }
+  console.log('Listening at http://localhost:' + port + '\n')
+})
+监听这个8080端口，然后，
+
+
+在我们webpack里提到的loader和plugin，去官网查查，巩固一下它们的概念
+
+接下来我们的实战开发过程中，也可能对webpack配置做一些小的修改，
