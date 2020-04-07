@@ -1,0 +1,29 @@
+同学们，你们好，从这一章开始，我就来带大家编写外卖app商家页面的代码。
+首先，我们来看一下页面整体设计和一些组件的拆分，由于我们是组件化的开发，那么整个页面可以看成是App.vue的大组件，
+然后我们再来结合设计稿看一下，这个大组件，它会包含头部Header区域，我们会单拆一个Header组件，还有导航区，控制下面内容区的切换，
+内容区包含商品评价和商家详情，三个区块拆分成Goods、Ratings、Seller三个组件，那这三个区块的切换，我们会基于VueRouter来实现，
+这个稍后我们会介绍，那先来动手去做一下这个代码，我们可以看到在static目录下，添加了一个css/reset.css，这个文件做一些css重置，
+我们知道我们开发一个前端页面，都需要把一些标签的默认样式都reset掉，这里我们选择了http://cssreset.com官网提供的一个标准reset样式，
+这块我们肯定不会手动去开发，所以我们就会用一个现成的，然后我们会自定义一块，就是包含对一些如：a标签，li标签，还有一些webkit的相关类型，
+css的诸多设置，为了是让它在手机的展示更加好看，那我们有了reset这个css，我们会在页面上去引用，可以用link标签，
+这样我们在页面一开始就引入了这个css文件，它会把一些默认样式给reset掉，然后由于开发是一个移动端的项目，那我们肯定是需要这个视口，
+移动端，它的视口是不能被缩放的，还有一个初始的宽高设置，这里我们通过一个meta标签，name="viewport"：
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>sell</title>
+    <link rel="stylesheet" type="text/css" href="static/css/reset.css">
+  </head>
+然后，看入口js：main.js，它实际上就是recall？了App.vue，这里通过import方式，这里代码还是要加结束符分号的，运行发现报错：semi Extra semicolon，
+表示对分号的一些配置，也就是说，默认ESLint配置是不能有分号的，然而我们强加了分号，我们希望代码的风格是有分号的，那怎么办？
+我们可以去配置.eslintrc.js，下面有一个rules，可以对分号做一个配置，
+    'semi': ['error', 'always'],
+关于怎么配置，我们可以去它的官网看，https://eslint.org/docs/rules/semi
+要求我们是没有分号的，如果你尝试要有分号的话，可以给options做一些配置，
+配置后，发现App.vue里面缺少必要的分号，加上分号后就好了，然后将App.vue中原来的内容删掉，components目录下的Hello.vue也不需要了，删掉，
+又有报错，是关于indent的一些配置，是基于tab还是空格？如果我们遵循webstorm默认的缩进配置，想忽略掉indent配置，可以编辑.eslintrc.js，加上
+'indent': 0，我们希望用webstorm自带的格式化插件自动格式化后，结果是ok的，再删去多余的空行，就不报错了，再看main.js里面：
+/* eslint-disable no-new */，如果不加这一行，会报错：no-new Do not use 'new' for side effects，
+这个意思其实是，如果我们需要new一个对象，一定是要赋值给某个变量的，但是我们用vue去实例化的时候，它是不需要赋值给任何变量的，
+所以我们单独给这个配一条规则的话，就可以单独给这行代码上面添加这个注释，把它对规则的校验给跳过，用eslint=-disable 具体规则名，
+这个也是eslint的一个常用技巧，好知道了这个new Vue实例以后，我们看看这个App.vue，这个components App是怎样去编写？
