@@ -1,0 +1,59 @@
+拆成三个区块，第一个是Header区块，然后是导航区块，然后就是内容区块，我们来看一下页面，可以看到页面是分了这三个区块，
+内容都挂在这个body下，因为在main.js里：
+new Vue({
+  el: 'body',
+  components: {App}
+});
+body为App组件的挂载点，我们就会在页面中看到这些内容，这里没有实现任何功能，也没有写任何样式，非常丑陋不可用，
+我们接下来再看，我们可以把Header给抽成一个Header组件，我们之前已经定义了Header.vue，接下来就要编写这个Header组件，
+然后，把App.vue的Header部分替换为组件的引用，我们可以看到Header组件是我们在别的章节创建的，我们并没有去编写任何代码，
+但这里面就已经有了一些基础的代码，那这个代码是怎么产生的？这里我要介绍一个webstorm技巧，我们打开webstorm的设置，
+其中有Editor下面的File and Code Templates，这里面它其实是给一些类型的文件做一些基础的模板配置，也就是说，
+我们在webstorm这个编辑器下创建一个新的文件，什么类型的文件就会生成一些模板的基础代码，在这里面，它有一个加号，
+我们就可以去创建一个Vue File，给诸如Java、vue这样的文件起一个名称，遇到这些文件我们就可以自动生成一段模板的代码，
+在Vue File里我们可以把代码填好，比如说我们知道一个vue有三部分构成，template、script、style，我们发现，
+这里的script又多了一个type属性，type="text/ecmascript-6"，这是在script里支持es6的语法，编译器可以识别这些语法，
+所以我们要给这个script加个type。style里面有个lang属性，lang="stylus"，rel="stylesheet/stylus"，
+这个也是为了让编辑器接下来能认识我们stylus的语法，而不让编译器认为这是一个错误的代码。
+好，我们创建了这个template以后，我们点Apply应用，我们可以演示一下，新建一个文件，自动生成这些代码，
+创建好了以后，发现这些代码确实是自动生成的，我们接下来要做的就是把App.vue里的Header替换为Header.vue，
+我们在Header.vue里写一些内容，
+<template>
+  <div class="header">
+    我是header
+  </div>
+</template>
+这里我们区分一下，用一些中文，那我们这个模板就创建好了，我们怎么把Header用到App.vue里面呢？
+进入App.vue，我们需要在script里去注册这个Header组件，首先要引用：
+<script>
+  import header from 'components/header/header.vue';
+</script>
+然后，还要在Header.vue里export，因为我们既然要import，那么Header当然要export
+<script type="text/ecmascript-6">
+  export {};
+我们可以导出为空，先不做任何配置，好，我们看一下编译过程，有没有问题，这里报错，
+它不能找到./src/components/header/header.vue，也就是说，我们依赖的路径有问题，为什么，我们来看一下，
+由于我们当前的目录是src目录，直接去引用components它是不能找到的，那我们，一个解决方案是可以找相对路径：
+<script>
+  import header from './components/header/header.vue';
+</script>
+刚才的报错没有了，现在报错是header没有使用，那我们就要去注册header，
+export default和非default的区别是：它是把整个作为Module.export导出的，我们需要加一个default标识，
+<script>
+  import header from './components/header/header.vue';
+  export default {
+    components: {}
+  };
+</script>
+同样，刚才这边写的Header，也需要export default {};
+<script type="text/ecmascript-6">
+  export default {};
+回到App.vue，在这个components下面，我们就要注册header
+<script>
+  import header from './components/header/header.vue';
+  export default {
+    components: {
+      header
+    }
+  };
+</script>
