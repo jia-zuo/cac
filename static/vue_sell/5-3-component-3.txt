@@ -1,0 +1,81 @@
+回到App.vue，在这个components下面，我们就要注册header
+<script>
+  import header from './components/header/header.vue';
+  export default {
+    components: {
+      header
+    }
+  };
+</script>
+注册完成后，可以在标签中使用这个header
+<template>
+  <div id="app">
+    <header></header>
+相当于这个自定义标签：header组件我们就可以用了。
+我们来看一下编译结果，这里还是报错了，说不能去Cannot resolve module 'stylus-loader' in .../components/header
+我们可以看到package.json里面devDependencies下面只有"css-loader": "^0.23.0"，
+缺少"stylus-loader"，所以我们要去安装它，我们依赖一个"stylus-loader": "^2.1.1"
+我们需要在当前项目目录下执行npm install，如果是windows用户是不需要sudo的，sudo支持mac用户有权限安装，
+我们看到stylus已经安装了，我们看一下node_modules，下面有一个stylus-loader，
+那我们再来编译一下看有没有问题，还是通过npm run dev这个命令，可以看到我们没有任何错误了，
+我们来看一下浏览器，刷新一下，有一个报错：
+Do not use built-in or reserved HTML elements as component id: header
+什么意思？我们这里用了一个关键词？header在HTML5里面，是一个原生的标签，所以我们去注册这个组件的时候，
+用到这个名字和原生的header冲突了，所以vue在开发时的环境里面，会有一个警告，不让用原生的HTML标签作为它的组件名称，
+所以我们这里给它起一个别名叫：'v-header'
+<script>
+  import header from './components/header/header.vue';
+  export default {
+    components: {
+      'v-header': header
+    }
+  };
+</script>
+之后，我们所有组件都可以'v-'开头，明确表明它是一个vue的组件，
+<template>
+  <div id="app">
+    <v-header></v-header>
+这样的话，我们的header组件就引用成功了。
+引用了header组件，我们可以把导航给实现一下，参照一下设计稿，
+它是在移动浏览器环境下，三等分，这个布局，我们可以看标注，参考标注去做这个区块的开发，
+从html结构上，它就是父的一个容器，然后里面有三个子容器，那我们在代码里面可以这么写：
+<div class="tab">
+  <div class"tab-item">商品</div>
+  <div class"tab-item">评论</div>
+  <div class"tab-item">商家</div>
+</div>
+预览一下，内容已经出来了，接下来就是写样式，我们知道它是一个三等分的布局，三等分的布局有什么好的样式？
+会让它水平排列，然后三等分呢？这里我们就会用到一个移动端非常经典的一个布局，就叫Flex布局，那我们其实可以去写这个样式，
+我们为了让这个样式有一个限定，让它在.app下面，style也需要加属性才能识别stylus语法，宽度为100%，高度为80/2=40px，
+让它垂直居中，行高也是80/2=40px，这个80在代码里面不可以是80，因为所有移动端设计都是按两倍的大小去设计的，
+这个宽度是按iPhone6设计的，这个宽度设备像素是375，但它物理像素是750，所以这个dpi是2，然后设计稿也是按两倍大小去标的，
+然后我们把它的容器display: flex 的话，它的内容，子元素.tab-item的flex都为1，然后，因为它在这里面是居中的，
+相当于我们分三等分，每个里面是居中的，所以我们给它设置text-align为center，我们来看一下效果，
+这个没有任何效果，这个.tab和.tab-item它并没有应用任何样式，是因为：
+<template>
+  <div id="app">
+在样式里，用”.类名“无效，应该用：#app
+<style lang="stylus" rel="stylesheet/stylus">
+  #app
+    .tab
+      display: flex
+      width: 100%
+      height: 40px
+      line-height: 40px
+      .tab-item
+        flex: 1
+        text-align: center
+</style>
+再看一下这个效果，可以看到，这里它就变为三等分了，而且每等分是居中，我们可以把它调为手机的预览模式，
+iPhone6的效果，宽高度是40像素，但是，在移动端手机的物理像素其实就是80px，宽度放更大，也可以等分，
+Flex是一个非常好的移动端布局，我们再看具体的样式，它这里面，会有一些兼容性的写法，
+比如
+.tab {
+  display: -webkit-box;
+  display: -ms-flexbox;
+这就是一些Flex在浏览器兼容性的写法，但我们看源码，并没有写兼容性代码，
+这是因为vue-loader它依赖了一个postcss插件，这个插件会自动抹平CSS兼容问题，
+所以我们在代码里会非常爽的只写一个display: flex，然后flex: 1这种标准的写法，去实现一个flex布局，
+好，我们实现了flex布局以后，我们再想一下，我们去点击这些按钮的时候，应该下面的内容会发生变化，
+这里却没有任何反应，是因为我们没有写相关的代码，那我们这个区块切换是通过vue-router去实现的，
+接下来就让我们实现vue-router。
